@@ -10,6 +10,7 @@ requires = [
     'pyramid',
     'pyramid_debugtoolbar',
     'waitress',
+    'deform_bootstrap',
     ]
 
 setup(name='PrincipiVaje',
