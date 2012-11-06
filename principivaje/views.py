@@ -9,6 +9,9 @@ from .schemes import (
     SchemaNevronskaMreza,
 )
 
+from neuralnetwork import Nevronska_mreza
+
+
 def get_resources(form, request):
     resources = form.get_widget_resources()
     js_resources = resources['js']
@@ -20,7 +23,7 @@ def get_resources(form, request):
                 'deform_bootstrap:static/bootstrap.min.js'] + js_links \
                 + ['deform_bootstrap:static/deform_bootstrap.js']
     css_links = ['deform:static/%s' % r for r in css_resources]
-    css_links = ['deform_bootstrap:static/deform_bootstrap.css', \
+    css_links = ['deform_bootstrap:static/deform_bootstrap.css',
                  'deform_bootstrap:static/jquery_chosen/chosen.css'] + css_links
     js_tags = ['<script type="text/javascript" src="%s"></script>' % link
                for link in map(request.static_url, js_links)]
@@ -36,31 +39,47 @@ def my_view(request):
     js_tags, css_tags = get_resources(myform, request)
     result = {'title': "Naslov", "js_tags": js_tags, "css_tags": css_tags}
     appstruct = {'utezi_prvi_nivo': [
-    (0, 0.2, -0.2, 0),
-    (0, 0.1, 0, 0.5),
-    (0, -0.3, 0, 0.4)
+        (0, 0.2, -0.2, 0),
+        (0, 0.1, 0, 0.5),
+        (0, -0.3, 0, 0.4)
     ],
-        'utezi_drugi_nivo':[
-    (0, 0.5, -0.5, 0),
-    (0, 0, -0.3, 0.8),
-    ],
-        'vhod':[
-    (0, 0.4, -0.2),
-    (0.3, -0.1, 0.5)
+        'utezi_drugi_nivo': [
+            (0, 0.5, -0.5, 0),
+            (0, 0, -0.3, 0.8),
         ],
-        'zeleni_izhod':[
-    (0, 1),
-    (1, 0)
+        'vhod': [
+            (0, 0.4, -0.2),
+            (0.3, -0.1, 0.5)
+        ],
+        'zeleni_izhod': [
+            (0, 1),
+            (1, 0)
         ]
-        }
+    }
     if 'submit' in request.POST:
         controls = request.POST.items()
         try:
             appstruct = myform.validate(controls)
+            print appstruct
+            nn = Nevronska_mreza(appstruct["eta"], appstruct["vhod"],
+                                 appstruct["zeleni_izhod"],
+                                 appstruct["utezi_prvi_nivo"],
+                                 appstruct["utezi_drugi_nivo"],
+                                 appstruct["utez_i"],
+                                 appstruct["utez_j"],
+                                 appstruct["utez_l"])
+            nn.run()
+            result["tabela"] = nn.tabela
+            result["text_izhod"] = nn.text_izhod
         except ValidationFailure, e:
             result['form'] = e.render()
             return result
-        result["form"] = myform.render()
+        except Exception, e:
+            print e
+            request.ext.flash_error(str(e), title="Napaka pri podatkih")
+            result["form"] = myform.render(appstruct=appstruct)
+            return result
+        result["form"] = myform.render(appstruct=appstruct)
         return result
     # We are a GET not a POST
     result["form"] = myform.render(appstruct=appstruct)

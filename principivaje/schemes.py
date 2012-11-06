@@ -71,9 +71,9 @@ class SchemaNevronskaMreza(colander.MappingSchema):
                           )
     zeleni_izhod = SchemaRowsZeleniIzhod(
         description=u"Kakšen bi moral biti izhod nevronske mreže",
-        widget=deform.widget.TextAreaCSVWidget(rows=2, cols=10),
-        validator=colander.Range(1, 2, u"Vsebuje manj vrstic kot ${min}!",
-                                 u"Vsebuje več več vrstic kot ${max}!"),
+        #widget=deform.widget.TextAreaCSVWidget(rows=2, cols=10),
+        #validator=colander.Range(1, 2, u"Vsebuje manj vrstic kot ${min}!",
+                                 #u"Vsebuje več več vrstic kot ${max}!"),
     )
 
     utezi_prvi_nivo = SchemaRowsUtez1(validator=colander.Length(1, 3))

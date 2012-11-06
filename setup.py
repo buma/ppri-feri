@@ -11,12 +11,13 @@ requires = [
     'pyramid_debugtoolbar',
     'waitress',
     'deform_bootstrap',
+    'numpy',
     ]
 
 setup(name='PrincipiVaje',
       version='0.0',
       description='PrincipiVaje',
-      long_description=README + '\n\n' +  CHANGES,
+      long_description=README + '\n\n' + CHANGES,
       classifiers=[
         "Programming Language :: Python",
         "Framework :: Pylons",

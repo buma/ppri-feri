@@ -22,3 +22,36 @@
 
 
 ${form|n}
+
+% if text_izhod:
+	% for text in text_izhod:
+		% if text.startswith("$"):
+			<p>${text}</p>
+		% else:
+			${text|n}
+		%endif
+	% endfor
+% endif
+
+% if tabela:
+	<table class="table">
+		<thead>
+			<tr>
+				% for th in tabela[0]:
+					<th>${th}</th>
+				% endfor
+			</tr>
+		</thead>
+		<tbody>
+			% for row in tabela[1:]:
+				<tr>
+					% for td in row:
+						<th>${td}</th>
+					% endfor
+				</tr>
+			% endfor
+
+		</tbody>
+
+	</table>
+% endif

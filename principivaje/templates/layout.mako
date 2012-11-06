@@ -41,15 +41,21 @@
     </div>
     <div class="container">
       <div>
-
-  % if request.session.peek_flash():
-  <div id="flash">
-    <% flash = request.session.pop_flash() %>
-	% for message in flash:
-	${message}<br>
-	% endfor
-  </div>
-  % endif
+	      <%def name="flash(queue)">
+		      % if request.session.peek_flash(queue):
+				<% flash = request.session.pop_flash(queue) %>
+				% for message in flash:
+					<div class="alert alert-${queue}">
+						% if title in message:
+							<h4>${message["title"]}</h4>
+						% endif
+						${message["body"]}
+				</div>
+				% endfor
+		      % endif
+	      </%def>
+	      ${flash("error")}
+	      ${flash("success")}
 
     
     ${next.body()}
