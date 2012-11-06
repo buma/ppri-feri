@@ -60,7 +60,7 @@ def my_view(request):
         controls = request.POST.items()
         try:
             appstruct = myform.validate(controls)
-            print appstruct
+            #print appstruct
             nn = Nevronska_mreza(appstruct["eta"], appstruct["vhod"],
                                  appstruct["zeleni_izhod"],
                                  appstruct["utezi_prvi_nivo"],
