@@ -20,6 +20,17 @@
 <p>Parametri \(i\),\(j\) in \(l\) so parametri uteži: \(w_{i,j}^{(l)}\) ki povejo za katero utež si želimo izračunati popravek. 
 </p>
 
+<p>Uteži se vpišejo vse. Npr. če so v navodilih uteži \(w_2^{(2)} = \{0, -0.3, 0.8\}\)
+in je iz slike razvidno da so to indeksi 0,2 in 3 potem je potrebno to utež vpisati
+kot utež \( \{0,0,-0.3,0.8\} \) (Namesto indeksa 1 vpišemo 0)</p>
+
+<div class="alert alert-info alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	<h4>V vednost</h4>
+	Nekatere vrednosti niso enako kot na predavanjih ugotavljam ali je to zaradi kakšnih napak, ali pa zaradi zaokroževanja.
+	Namreč nisem še ugotovil na kakšen način se bi naj zaokroževalo. Včasih sta 2 mesti včasih 3...
+</div>
+
 
 ${form|n}
 
