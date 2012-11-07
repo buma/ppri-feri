@@ -97,12 +97,12 @@ class Nevronska_mreza(object):
 #Izracunajo se izhodi iz skritega nivoja
             self.vhod_2 = self.nivo(
                 index_primer, 0, self.vhod_1, self.w_1, self.vhod_2)
-            print self.vhod_2
+            #print self.vhod_2
 #izracunajo se izhodi iz zunanjega nivoja
             self.izhod = self.nivo(
                 index_primer, 1, self.vhod_2, self.w_2, self.izhod)
             #print "izhod"
-            print self.izhod
+            #print self.izhod
             st_vhodov = self.vhod_1.shape[1] - 1
             for i in range(self.izhod.shape[0]):
                 for j in range(1, self.izhod.shape[1]):
