@@ -27,7 +27,8 @@
   </head>
 
 <body>
-    <div class="navbar navbar-fixed-top navbar-inverse">
+    <div class="container">
+    <div class="navbar navbar-inverse">
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="${request.route_url('home')}">
@@ -42,36 +43,32 @@
         </div>
       </div>
     </div>
-    <div class="container">
-      <div>
-	      <%def name="flash(queue)">
-		      % if request.session.peek_flash(queue):
-				<% flash = request.session.pop_flash(queue) %>
-				% for message in flash:
-					<div class="alert alert-${queue}">
-						% if title in message:
-							<h4>${message["title"]}</h4>
-						% endif
-						${message["body"]}
-				</div>
-				% endfor
-		      % endif
-	      </%def>
-	      ${flash("error")}
-	      ${flash("success")}
+    ${flash("error")}
+    ${flash("success")}
 
     
     ${next.body()}
-
-  </div>
-  </div>
+</div>
   % if request.registry.settings["env"] == "production":
 	  <a title="Real Time Web Analytics" href="http://getclicky.com/100545333"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
 	  <script src="//static.getclicky.com/js" type="text/javascript"></script>
 	  <script type="text/javascript">try{ clicky.init(100545333); }catch(e){}</script>
 	  <noscript><p><img alt="Clicky" width="1" height="1" src="//in.getclicky.com/100545333ns.gif" /></p></noscript>
   %endif
-  
+<a href="https://github.com/buma/ppri-feri"><img style="position: absolute; top: 0; right: 0; border: 0;" src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub"></a>
 </body>
 </html>
 
+<%def name="flash(queue)">
+	% if request.session.peek_flash(queue):
+		<% flash = request.session.pop_flash(queue) %>
+		% for message in flash:
+			<div class="alert alert-${queue}">
+				% if title in message:
+					<h4>${message["title"]}</h4>
+				% endif
+				${message["body"]}
+			</div>
+		% endfor
+	% endif
+</%def>
