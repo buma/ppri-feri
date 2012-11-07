@@ -15,19 +15,24 @@ from neuralnetwork import Nevronska_mreza
 from colander import Invalid as colander_invalid
 
 
-def get_resources(form, request):
-    resources = form.get_widget_resources()
-    js_resources = resources['js']
-    css_resources = resources['css']
-    js_links = ['deform:static/%s' % r for r in js_resources]
-    js_links = ['deform_bootstrap:static/jquery-1.7.1.min.js',
-                'deform_bootstrap:static/jquery-ui-1.8.18.custom.min.js',
-                'deform_bootstrap:static/jquery.maskedinput-1.3.js',
-                'deform_bootstrap:static/bootstrap.min.js'] + js_links \
-                + ['deform_bootstrap:static/deform_bootstrap.js']
-    css_links = ['deform:static/%s' % r for r in css_resources]
-    css_links = ['deform_bootstrap:static/deform_bootstrap.css',
-                 'deform_bootstrap:static/jquery_chosen/chosen.css'] + css_links
+def get_resources(request, form=None):
+    js_links_basics = ['deform_bootstrap:static/bootstrap.min.js']
+    css_links_basics = ['deform_bootstrap:static/deform_bootstrap.css']
+    if form is None:
+        js_links = js_links_basics
+        css_links = css_links_basics
+    else:
+        resources = form.get_widget_resources()
+        js_resources = resources['js']
+        css_resources = resources['css']
+        js_links = ['deform:static/%s' % r for r in js_resources]
+        js_links = ['deform_bootstrap:static/jquery-1.7.1.min.js',
+                    'deform_bootstrap:static/jquery-ui-1.8.18.custom.min.js',
+                    'deform_bootstrap:static/jquery.maskedinput-1.3.js'
+                    ] + js_links_basics + js_links \
+                    + ['deform_bootstrap:static/deform_bootstrap.js']
+        css_links = ['deform:static/%s' % r for r in css_resources]
+        css_links = css_links_basics + ['deform_bootstrap:static/jquery_chosen/chosen.css'] + css_links
     js_tags = ['<script type="text/javascript" src="%s"></script>' % link
                for link in map(request.static_url, js_links)]
     css_tags = ['<link rel="stylesheet" href="%s"/>' % link
@@ -48,7 +53,7 @@ def validator(form, value):
 def my_view(request):
     schema = SchemaNevronskaMreza(validator=validator)
     myform = Form(schema, buttons=('submit',))
-    js_tags, css_tags = get_resources(myform, request)
+    js_tags, css_tags = get_resources(request, myform)
     result = {'title': u"Nevronska mreža", "js_tags": js_tags, "css_tags": css_tags}
     appstruct = {'utezi_prvi_nivo': [
         (0, 0.2, -0.2, 0),
@@ -94,4 +99,11 @@ def my_view(request):
         return result
     # We are a GET not a POST
     result["form"] = myform.render(appstruct=appstruct)
+    return result
+
+
+@view_config(route_name='changes', renderer='changes.mako')
+def changes(request):
+    js_tags, css_tags = get_resources(request)
+    result = {'title': u"Changelog", "js_tags": js_tags, "css_tags": css_tags}
     return result

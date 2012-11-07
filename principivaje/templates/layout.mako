@@ -36,6 +36,9 @@
 	  <ul class="nav">
 		  <li><a href="${request.route_url('mlp')}">Nevronske mreža</a></li>
 	  </ul>
+	  <ul class="nav">
+		  <li><a href="${request.route_url('changes')}">Changelog</a></li>
+	  </ul>
         </div>
       </div>
     </div>
