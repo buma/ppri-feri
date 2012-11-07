@@ -75,8 +75,7 @@ def my_view(request):
             result['form'] = e.render()
             return result
         except Exception, e:
-            print e
-            request.ext.flash_error(str(e), title="Napaka pri podatkih")
+            request.ext.flash_error(unicode(e), title="Napaka pri podatkih")
             result["form"] = myform.render(appstruct=appstruct)
             return result
         result["form"] = myform.render(appstruct=appstruct)

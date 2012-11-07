@@ -62,23 +62,28 @@ class SchemaNevronskaMreza(colander.MappingSchema):
                               default=0.3,
                               description="Hitrost učenja")
 
-    vhod = SchemaRowsVhod(description="Vhodne vrednosti brez biasa",
-                          validator=colander.Length(1, 2),
-                          title=u"Vhod",
-                          widget=deform.widget.SequenceWidget(
-                              min_len=1,
-                              max_len=2)
-                          )
+    vhod = SchemaRowsVhod(description="Vhodne vrednosti brez biasa")
     zeleni_izhod = SchemaRowsZeleniIzhod(
         description=u"Kakšen bi moral biti izhod nevronske mreže",
+        title=u"Želeni izhod"
         #widget=deform.widget.TextAreaCSVWidget(rows=2, cols=10),
         #validator=colander.Range(1, 2, u"Vsebuje manj vrstic kot ${min}!",
                                  #u"Vsebuje več več vrstic kot ${max}!"),
     )
 
-    utezi_prvi_nivo = SchemaRowsUtez1(validator=colander.Length(1, 3))
+    utezi_prvi_nivo = SchemaRowsUtez1(validator=colander.Length(1, 3),
+            widget=deform.widget.SequenceWidget(
+                min_len=1,
+                max_len=3),
+            title=u"Uteži prvi nivo"
+            )
 
-    utezi_drugi_nivo = SchemaRowsUtez2(validator=colander.Length(1, 2))
+    utezi_drugi_nivo = SchemaRowsUtez2(validator=colander.Length(1, 2),
+            widget=deform.widget.SequenceWidget(
+                min_len=1,
+                max_len=2
+                ),
+            title=u"Uteži prvi nivo")
 
     utez_i = colander.SchemaNode(colander.Int(),
                                  validator=colander.Range(1, 3),

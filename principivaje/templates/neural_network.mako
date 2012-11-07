@@ -46,7 +46,7 @@ ${form|n}
 			% for row in tabela[1:]:
 				<tr>
 					% for td in row:
-						<th>${td}</th>
+						<td>${td}</td>
 					% endfor
 				</tr>
 			% endfor
