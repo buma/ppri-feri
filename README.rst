@@ -4,6 +4,8 @@ PrincipiVaje -- Pomoč za razumevanje PPRI
 
 PPRI je spletni vmesnik knjižnice za snov PPRI(Principi porazdeljene in računalniške inteligence)
 
+`Online različica <http://ppri-feri.herokuapp.com/>`_
+
 
 Features
 ---------
