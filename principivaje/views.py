@@ -12,6 +12,8 @@ from .schemes import (
 
 from neuralnetwork import Nevronska_mreza
 
+from colander import Invalid as colander_invalid
+
 
 def get_resources(form, request):
     resources = form.get_widget_resources()
@@ -33,10 +35,18 @@ def get_resources(form, request):
     return js_tags, css_tags
 
 
+def validator(form, value):
+    if len(value['vhod']) != len(value['zeleni_izhod']):
+        exc = colander_invalid(form, u'Vhod in Želeni izhod morata imeti enako število vrstic!')
+        exc['vhod'] = u"Nima enako število vrstic kot želeni izhod!"
+        exc['zeleni_izhod'] = u"Nima enako število vrstic kot vhod!"
+        raise exc
+
+
 @view_config(route_name='home', renderer='neural_network.mako')
 @view_config(route_name='mlp', renderer='neural_network.mako')
 def my_view(request):
-    schema = SchemaNevronskaMreza()
+    schema = SchemaNevronskaMreza(validator=validator)
     myform = Form(schema, buttons=('submit',))
     js_tags, css_tags = get_resources(myform, request)
     result = {'title': u"Nevronska mreža", "js_tags": js_tags, "css_tags": css_tags}
