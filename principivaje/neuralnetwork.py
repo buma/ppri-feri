@@ -114,28 +114,28 @@ class Nevronska_mreza(object):
             self.index_primer = index_primer
 # FIXME: to ma nepotrebne vhodne parametre
             w_tren = self.popravki_utezi(self.i, self.j, self.l,
-                    self.vhod_1[index_primer], self.vhod_2[index_primer],
-                            self.izhod[index_primer],
-                            self.zeleni_izhod[index_primer])
-            self.tabela[index_primer + 1][-1]="%0.2g" % (w_tren,)
+                                         self.vhod_1[index_primer], self.vhod_2[index_primer],
+                                         self.izhod[index_primer],
+                                         self.zeleni_izhod[index_primer])
+            self.tabela[index_primer + 1][-1] = "%0.2g" % (w_tren,)
 # Skupen popravek uteži
             w_pop += w_tren
 # Napolni se tabela z ostalimi deltami
 # vse niso potrebne za računanje popravka želene uteži
-            self.text_izhod.append(u"<h3>Računanje vseh želenih \(\delta\) vrednosti</h3>")
+            self.text_izhod.append(
+                u"<h3>Računanje vseh želenih \(\delta\) vrednosti</h3>")
             self.text_izhod.append(u"<p>Te vrednosti niso potrebne za računanje popravkov uteži. Izračunane so zato, ker so bile v primeru</p>")
-            for index_tabela, (j, l) in enumerate([(1, 2), (2,2), (1, 1), (2, 1), (3, 1)]):
+            for index_tabela, (j, l) in enumerate([(1, 2), (2, 2), (1, 1), (2, 1), (3, 1)]):
                 var = self.deltas.get("%d_%d" % (j, l), None)
                 if var is None:
                     var = self.delta(j, l, self.vhod_1[index_primer],
-                            self.vhod_2[index_primer],
-                            self.izhod[index_primer],
-                            self.zeleni_izhod[index_primer])
-                self.tabela[1 + index_primer][index_tabela + 8] = "%0.3g" % (var,)
+                                     self.vhod_2[index_primer],
+                                     self.izhod[index_primer],
+                                     self.zeleni_izhod[index_primer])
+                self.tabela[1 + index_primer][
+                    index_tabela + 8] = "%0.3g" % (var,)
             self.deltas = {}
         self.text_izhod.append("Skupni popravek utezi \(w_{{{i},{j}}}^{{({l})}} = {w:0.3g}\)".format(w=w_pop, i=self.i, j=self.j, l=self.l))
-
-
 
     def nivo(self, indeks_primera, indeks_nivo, vhod, utezi, vhod_2=None):
         """izracuna za en vhodni primer izhode vseh nevronov v plasti"""
@@ -161,8 +161,7 @@ class Nevronska_mreza(object):
             vhod_2[indeks_primera, utez[0]] = round(y, 3)
         return vhod_2
 
-
-    def delta(self,j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
+    def delta(self, j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
         """Izračunava želeno delto in vse y-one in delte,ki so potrebni za ta izračun
         za popravljanje napak"""
         start = "$$\delta_{j}^{{({l})}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
@@ -175,7 +174,8 @@ class Nevronska_mreza(object):
             tmp = start.replace("y", "o") + " \\times (d_{j} - o_{j})$$"
             vals = start_vals + "\\times ({d} - {y: 0.2g}) = {rez: 0.2g}$$"
             self.text_izhod.append(tmp.format(j=j, l=l))
-            self.text_izhod.append(vals.format(j=j, l=l, y=o_i, d=d_i, rez=rez))
+            self.text_izhod.append(
+                vals.format(j=j, l=l, y=o_i, d=d_i, rez=rez))
             self.deltas["%d_%d" % (j, l)] = rez
         # računa za ostale nivoje
         else:
@@ -205,9 +205,8 @@ class Nevronska_mreza(object):
             vals = vals + ") = {rez: 0.2g}$$"
             self.text_izhod.append(tmp.format(j=j, l=l, l_1=l + 1))
             self.text_izhod.append(vals.format(j=j, l=l, y=y_j_l, rez=rez))
-            self.deltas["%d_%d" % (j, l)]= rez
+            self.deltas["%d_%d" % (j, l)] = rez
         return rez
-
 
     def y(self, j, l, vhod):
         """pridobi vrednosti y_j^(l), ki so potrebni za računanje popravkov uteži"""
@@ -220,7 +219,8 @@ class Nevronska_mreza(object):
 # y_j^(0) = x_j
         if l == 0:
             rez = vhod[j]
-            self.text_izhod.append("$$y_{j}^{{0}} = x_{j} = {rez: 0.2g}$$".format(j=j, rez=rez))
+            self.text_izhod.append(
+                "$$y_{j}^{{0}} = x_{j} = {rez: 0.2g}$$".format(j=j, rez=rez))
             return rez
         start = "$$y_{j}^{{{l}}} = "
 # y_j^(l) je rezultat nekje v skriti plasti
@@ -230,11 +230,11 @@ class Nevronska_mreza(object):
             self.text_izhod.append(tmp.format(j=j, l=l, rez=rez))
         return rez
 
-
     def popravki_utezi(self, i, j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
         """Izračuna popravke uteži za utež w_i,j^(l) indeksi so enaki
         kot na predavanjih"""
-        delta_j_l = self.delta(i, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
+        delta_j_l = self.delta(
+            i, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
         y_j_l = self.y(j, l - 1, vhod)
         rez = self.eta * delta_j_l * y_j_l
         self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = \eta * \delta_{i}^{{({l})}}y_{j}^{l_1}$$".format(i=i, j=j, l=l, l_1=l - 1))
