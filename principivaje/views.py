@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pyramid.view import view_config
 from deform import (
     Form,
@@ -38,7 +39,7 @@ def my_view(request):
     schema = SchemaNevronskaMreza()
     myform = Form(schema, buttons=('submit',))
     js_tags, css_tags = get_resources(myform, request)
-    result = {'title': "Naslov", "js_tags": js_tags, "css_tags": css_tags}
+    result = {'title': u"Nevronska mreža", "js_tags": js_tags, "css_tags": css_tags}
     appstruct = {'utezi_prvi_nivo': [
         (0, 0.2, -0.2, 0),
         (0, 0.1, 0, 0.5),

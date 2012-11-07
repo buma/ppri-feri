@@ -34,7 +34,7 @@
 		<abbr title="Principi porazdeljene in računalniške inteligence">PPRI</abbr>
           </a>
 	  <ul class="nav">
-		  <li><a href="${request.route_url('mlp')}">Nevronske mreže</a></li>
+		  <li><a href="${request.route_url('mlp')}">Nevronske mreža</a></li>
 	  </ul>
         </div>
       </div>
