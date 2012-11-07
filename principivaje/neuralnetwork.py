@@ -92,7 +92,7 @@ class Nevronska_mreza(object):
         w_pop = 0
         for index_primer in range(self.vhod_1.shape[0]):
             self.text_izhod.append(
-                "<h3>Ucni vzorec %d</h3>" % (index_primer + 1))
+                u"<h3>Učni vzorec %d</h3>" % (index_primer + 1))
 #Izracunajo se izhodi iz skritega nivoja
             self.vhod_2 = self.nivo(
                 index_primer, 0, self.vhod_1, self.w_1, self.vhod_2)
@@ -106,16 +106,20 @@ class Nevronska_mreza(object):
             for i in range(self.izhod.shape[0]):
                 for j in range(1, self.izhod.shape[1]):
                     self.tabela[i + 1][st_vhodov + j] = self.izhod[i, j]
+            self.text_izhod.append(u"<h3>Računanje popravka uteži</h3>")
 #indeksi so od 1 skratka enako kot v slikah
-            #w_pop += popravki_utezi(1, 2, 1, self.vhod_1[index_primer], self.vhod_2[index_primer], self.izhod[index_primer], self.zeleni_izhod[index_primer])
-        #print "Skupni popravek utezi $w_{{1,2}}^{{(1)}} = {0:0.3g}$".format(w_pop)
+            self.index_primer = index_primer
+            w_tren = self.popravki_utezi(self.i, self.j, self.l, self.vhod_1[index_primer], self.vhod_2[index_primer], self.izhod[index_primer], self.zeleni_izhod[index_primer])
+            self.tabela[index_primer + 1][-1]="%0.2g" % (w_tren,)
+            w_pop += w_tren
+        self.text_izhod.append("Skupni popravek utezi \(w_{{{i},{j}}}^{{({l})}} = {w:0.3g}\)".format(w=w_pop, i=self.i, j=self.j, l=self.l))
 
     def nivo(self, indeks_primera, indeks_nivo, vhod, utezi, vhod_2=None):
         """izracuna za en vhodni primer izhode vseh nevronov v plasti"""
         if vhod_2 is None:
             vhod_2 = np.zeros(
                 (vhod.shape[0], len(self.neuroni[indeks_nivo]) + 1))
-#dodamo bias
+            #dodamo bias
             vhod_2[:, 0] = - 1
         self.text_izhod.append("<h4>%d nivo</h4>" % (indeks_nivo + 1))
         for index, neuron in enumerate(self.neuroni[indeks_nivo]):
@@ -133,78 +137,78 @@ class Nevronska_mreza(object):
         return vhod_2
 
 
-def delta(j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
-    """Izračunava vse delte za popravljanje napak"""
-    start = "$$\delta_{j}^{{{l}}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
-    start_vals = "$$\delta_{j}^{{{l}}} = {y: 0.2g} \\times (1 - {y: 0.2g})"
-# računa za zadnji nivo
-    if l == 2:
-        o_i = izhod_nivo[j]
-        d_i = zeleni_izhod_i[j - 1]
-        rez = o_i * (1 - o_i) * (d_i - o_i)
-        tmp = start.replace("y", "o") + " \\times (d_{j} - o_{j})$$"
-        vals = start_vals + "\\times ({d} - {y: 0.2g}) = {rez: 0.2g}$$"
-        print tmp.format(j=j, l=l)
-        print vals.format(j=j, l=l, y=o_i, d=d_i, rez=rez)
-# računa za ostale nivoje
-    else:
-        y_j_l = y(j, l, vhod)
-        # FIXME: trenutno dela samo za logistične nevrone
-        rez = y_j_l * (1 - y_j_l)
-        tmp = start + " \\times ("
-        vals = start_vals + " \\times ("
-        k = 1
-        wk = []
-        wk_vals = []
-        rez_vals = []
-        # računanje: (\Epsilon_k w_k,j^(l+1) \delta_k^(l+1))
-        for utez in w_2[:, j]:
-            if utez != 0:
-                wk.append("w_{{" + str(k) + ",{j}}}^{{({l_1})}} \\times \delta_" + str(k) + "^{{({l_1})}}")
-                delta_j_l_1 = delta(
-                    k, l + 1, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
-                wk_vals.append("%.02g \\times %.03g" % (utez, delta_j_l_1))
-                rez_vals.append(utez * delta_j_l_1)
-                k += 1
-        tmp += "+".join(wk)
-        vals += "+".join(wk_vals)
-        rez *= sum(rez_vals)
+    def delta(self,j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
+        """Izračunava vse delte za popravljanje napak"""
+        start = "$$\delta_{j}^{{{l}}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
+        start_vals = "$$\delta_{j}^{{{l}}} = {y: 0.2g} \\times (1 - {y: 0.2g})"
+        # računa za zadnji nivo
+        if l == 2:
+            o_i = izhod_nivo[j]
+            d_i = zeleni_izhod_i[j - 1]
+            rez = o_i * (1 - o_i) * (d_i - o_i)
+            tmp = start.replace("y", "o") + " \\times (d_{j} - o_{j})$$"
+            vals = start_vals + "\\times ({d} - {y: 0.2g}) = {rez: 0.2g}$$"
+            self.text_izhod.append(tmp.format(j=j, l=l))
+            self.text_izhod.append(vals.format(j=j, l=l, y=o_i, d=d_i, rez=rez))
+        # računa za ostale nivoje
+        else:
+            y_j_l = self.y(j, l, vhod)
+            # FIXME: trenutno dela samo za logistične nevrone
+            rez = y_j_l * (1 - y_j_l)
+            tmp = start + " \\times ("
+            vals = start_vals + " \\times ("
+            k = 1
+            wk = []
+            wk_vals = []
+            rez_vals = []
+            # računanje: (\Epsilon_k w_k,j^(l+1) \delta_k^(l+1))
+            for utez in self.w_2[:, j]:
+                if utez != 0:
+                    wk.append("w_{{" + str(k) + ",{j}}}^{{({l_1})}} \\times \delta_" + str(k) + "^{{({l_1})}}")
+                    delta_j_l_1 = self.delta(
+                        k, l + 1, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
+                    wk_vals.append("%.02g \\times %.03g" % (utez, delta_j_l_1))
+                    rez_vals.append(utez * delta_j_l_1)
+                    k += 1
+            tmp += "+".join(wk)
+            vals += "+".join(wk_vals)
+            rez *= sum(rez_vals)
 
-        tmp += ")$$"
-        vals = vals + ") = {rez: 0.2g}$$"
-        print tmp.format(j=j, l=l, l_1=l + 1)
-        print vals.format(j=j, l=l, y=y_j_l, rez=rez)
-    return rez
-
-
-def y(j, l, vhod):
-    """pridobi vrednosti y_j^(l), ki so potrebni za računanje popravkov uteži"""
-    rez = 42
-    if j == 0:
-        print "$$y_0^{%d} = -1$$" % (l)
-        rez = -1
+            tmp += ")$$"
+            vals = vals + ") = {rez: 0.2g}$$"
+            self.text_izhod.append(tmp.format(j=j, l=l, l_1=l + 1))
+            self.text_izhod.append(vals.format(j=j, l=l, y=y_j_l, rez=rez))
         return rez
-    if l == 0:
-        rez = vhod[j]
-        print "$$y_{j}^{{0}} = x_{j} = {rez: 0.2g}$$".format(j=j, rez=rez)
+
+
+    def y(self, j, l, vhod):
+        """pridobi vrednosti y_j^(l), ki so potrebni za računanje popravkov uteži"""
+        rez = 42
+        if j == 0:
+            self.text_izhod.append("$$y_0^{%d} = -1$$" % (l))
+            rez = -1
+            return rez
+        if l == 0:
+            rez = vhod[j]
+            self.text_izhod.append("$$y_{j}^{{0}} = x_{j} = {rez: 0.2g}$$".format(j=j, rez=rez))
+            return rez
+        start = "$$y_{j}^{{{l}}} = "
+        if l == 1:
+            rez = self.vhod_2[self.index_primer, j]
+            tmp = start + "{rez: 0.2g}$$"
+            self.text_izhod.append(tmp.format(j=j, l=l, rez=rez))
         return rez
-    start = "$$y_{j}^{{{l}}} = "
-    if l == 1:
-        rez = vhod_2[0, j]
-        tmp = start + "{rez: 0.2g}$$"
-        print tmp.format(j=j, l=l, rez=rez)
-    return rez
 
 
-def popravki_utezi(i, j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
-    """Izračuna popravke uteži za utež w_i,j^(l) indeksi so enaki
-    kot na predavanjih"""
-    delta_j_l = delta(i, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
-    y_j_l = y(j, l - 1, vhod)
-    rez = eta * delta_j_l * y_j_l
-    print "$$\Delta w_{{{i},{j}}}^{{({l})}} = \eta * \delta_{i}^{{({l})}}y_{j}^{l_1}$$".format(i=i, j=j, l=l, l_1=l - 1)
-    print "$$\Delta w_{{{i},{j}}}^{{({l})}} = {eta: .02g} * {delta: 0.2g} * {y: 0.2g} = {rez: 0.2g}$$".format(i=i, j=j, l=l, eta=eta, delta=delta_j_l, rez=rez, y=y_j_l)
-    return rez
+    def popravki_utezi(self, i, j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
+        """Izračuna popravke uteži za utež w_i,j^(l) indeksi so enaki
+        kot na predavanjih"""
+        delta_j_l = self.delta(i, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
+        y_j_l = self.y(j, l - 1, vhod)
+        rez = self.eta * delta_j_l * y_j_l
+        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = \eta * \delta_{i}^{{({l})}}y_{j}^{l_1}$$".format(i=i, j=j, l=l, l_1=l - 1))
+        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = {eta: .02g} * {delta: 0.2g} * {y: 0.2g} = {rez: 0.2g}$$".format(i=i, j=j, l=l, eta=self.eta, delta=delta_j_l, rez=rez, y=y_j_l))
+        return rez
 
 
 if __name__ == "__main__":
