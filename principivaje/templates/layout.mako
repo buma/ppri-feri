@@ -31,7 +31,7 @@
       <div class="navbar-inner">
         <div class="container">
           <a class="brand" href="${request.route_url('home')}">
-		  Principi distributivnih
+		<abbr title="Principi porazdeljene in računalniške inteligence">PPRI</abbr>
           </a>
 	  <ul class="nav">
 		  <li><a href="${request.route_url('mlp')}">Nevronske mreže</a></li>
