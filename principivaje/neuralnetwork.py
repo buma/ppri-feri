@@ -85,12 +85,13 @@ class Nevronska_mreza(object):
         return 1.0 / (1.0 + math.exp(-z))
 
     def run(self):
-#Za vsak učni vzorec //ena epoha
         self.vhod_2 = None
         self.delta_i_2 = np.zeros(
             (self.vhod_1.shape[0], self.zeleni_izhod.shape[1]))
         self.izhod = None
         w_pop = 0
+# Za vsak učni vzorec
+# ko se izvede cela zanka se izvede ena epoha
         for index_primer in range(self.vhod_1.shape[0]):
             self.text_izhod.append(
                 u"<h3>Učni vzorec %d</h3>" % (index_primer + 1))
@@ -103,19 +104,26 @@ class Nevronska_mreza(object):
                 index_primer, 1, self.vhod_2, self.w_2, self.izhod)
             #print "izhod"
             #print self.izhod
+#Tabela se napolni z izhodom iz nevronske mreze
             st_vhodov = self.vhod_1.shape[1] - 1
             for i in range(self.izhod.shape[0]):
                 for j in range(1, self.izhod.shape[1]):
                     self.tabela[i + 1][st_vhodov + j] = self.izhod[i, j]
+#Začne se backpropagation
             self.text_izhod.append(u"<h3>Računanje popravka uteži</h3>")
-#indeksi so od 1 skratka enako kot v slikah
             self.index_primer = index_primer
+# FIXME: to ma nepotrebne vhodne parametre
             w_tren = self.popravki_utezi(self.i, self.j, self.l,
                     self.vhod_1[index_primer], self.vhod_2[index_primer],
                             self.izhod[index_primer],
                             self.zeleni_izhod[index_primer])
             self.tabela[index_primer + 1][-1]="%0.2g" % (w_tren,)
+# Skupen popravek uteži
             w_pop += w_tren
+# Napolni se tabela z ostalimi deltami
+# vse niso potrebne za računanje popravka želene uteži
+            self.text_izhod.append(u"<h3>Računanje vseh želenih \(\delta\) vrednosti</h3>")
+            self.text_izhod.append(u"<p>Te vrednosti niso potrebne za računanje popravkov uteži. Izračunane so zato, ker so bile v primeru</p>")
             for index_tabela, (j, l) in enumerate([(1, 2), (2,2), (1, 1), (2, 1), (3, 1)]):
                 var = self.deltas.get("%d_%d" % (j, l), None)
                 if var is None:
@@ -134,9 +142,11 @@ class Nevronska_mreza(object):
         if vhod_2 is None:
             vhod_2 = np.zeros(
                 (vhod.shape[0], len(self.neuroni[indeks_nivo]) + 1))
-            #dodamo bias
+            #dodamo bias na izhod
+            #Ta izhod namreč postane vhod v naslednji plasti
             vhod_2[:, 0] = - 1
         self.text_izhod.append("<h4>%d nivo</h4>" % (indeks_nivo + 1))
+# Za vsak nevron
         for index, neuron in enumerate(self.neuroni[indeks_nivo]):
             utez = neuron.utez
             self.text_izhod.append("<h5>Nevron %d</h5>" % (index + 1,))
@@ -153,7 +163,8 @@ class Nevronska_mreza(object):
 
 
     def delta(self,j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
-        """Izračunava vse delte za popravljanje napak"""
+        """Izračunava želeno delto in vse y-one in delte,ki so potrebni za ta izračun
+        za popravljanje napak"""
         start = "$$\delta_{j}^{{({l})}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
         start_vals = "$$\delta_{j}^{{({l})}} = {y: 0.2g} \\times (1 - {y: 0.2g})"
         # računa za zadnji nivo
@@ -201,15 +212,18 @@ class Nevronska_mreza(object):
     def y(self, j, l, vhod):
         """pridobi vrednosti y_j^(l), ki so potrebni za računanje popravkov uteži"""
         rez = 42
+# y_0^(l) = - 1
         if j == 0:
             self.text_izhod.append("$$y_0^{%d} = -1$$" % (l))
             rez = -1
             return rez
+# y_j^(0) = x_j
         if l == 0:
             rez = vhod[j]
             self.text_izhod.append("$$y_{j}^{{0}} = x_{j} = {rez: 0.2g}$$".format(j=j, rez=rez))
             return rez
         start = "$$y_{j}^{{{l}}} = "
+# y_j^(l) je rezultat nekje v skriti plasti
         if l == 1:
             rez = self.vhod_2[self.index_primer, j]
             tmp = start + "{rez: 0.2g}$$"
@@ -229,6 +243,7 @@ class Nevronska_mreza(object):
 
 
 if __name__ == "__main__":
+# Vsi podatki so podatki iz predavanj na strani 23
     eta = 0.3
 #stolpci vhodni nevroni brez biasa
 #vsaka vrstica je en primer
@@ -241,6 +256,10 @@ if __name__ == "__main__":
         [0, 1],
         [1, 0]
     ])
+
+    """Uteži so vse uteži od 0 do n, če nekatere v navodilih manjkajo moraju
+
+    Tukaj imeti vrednost 0"""
 
 #Uteži prvega nivoja
     w_1 = np.array([
