@@ -33,6 +33,7 @@ def get_resources(form, request):
 
 
 @view_config(route_name='home', renderer='neural_network.mako')
+@view_config(route_name='mlp', renderer='neural_network.mako')
 def my_view(request):
     schema = SchemaNevronskaMreza()
     myform = Form(schema, buttons=('submit',))

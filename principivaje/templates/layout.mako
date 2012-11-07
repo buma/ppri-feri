@@ -34,7 +34,7 @@
 		  Principi distributivnih
           </a>
 	  <ul class="nav">
-		  <li><a href="${request.route_url('home')}">Nevronske mreže</a></li>
+		  <li><a href="${request.route_url('mlp')}">Nevronske mreže</a></li>
 	  </ul>
         </div>
       </div>
