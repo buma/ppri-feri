@@ -60,6 +60,7 @@ class Nevronska_mreza(object):
             rezultati.extend(self.zeleni_izhod[i, :])
             rezultati.extend([" "] * 6)
             self.tabela.append(rezultati)
+        self.deltas = {}
 
     @staticmethod
     def perceptron(w, vhod):
@@ -109,10 +110,24 @@ class Nevronska_mreza(object):
             self.text_izhod.append(u"<h3>Računanje popravka uteži</h3>")
 #indeksi so od 1 skratka enako kot v slikah
             self.index_primer = index_primer
-            w_tren = self.popravki_utezi(self.i, self.j, self.l, self.vhod_1[index_primer], self.vhod_2[index_primer], self.izhod[index_primer], self.zeleni_izhod[index_primer])
+            w_tren = self.popravki_utezi(self.i, self.j, self.l,
+                    self.vhod_1[index_primer], self.vhod_2[index_primer],
+                            self.izhod[index_primer],
+                            self.zeleni_izhod[index_primer])
             self.tabela[index_primer + 1][-1]="%0.2g" % (w_tren,)
             w_pop += w_tren
+            for index_tabela, (j, l) in enumerate([(1, 2), (2,2), (1, 1), (2, 1), (3, 1)]):
+                var = self.deltas.get("%d_%d" % (j, l), None)
+                if var is None:
+                    var = self.delta(j, l, self.vhod_1[index_primer],
+                            self.vhod_2[index_primer],
+                            self.izhod[index_primer],
+                            self.zeleni_izhod[index_primer])
+                self.tabela[1 + index_primer][index_tabela + 8] = "%0.3g" % (var,)
+            self.deltas = {}
         self.text_izhod.append("Skupni popravek utezi \(w_{{{i},{j}}}^{{({l})}} = {w:0.3g}\)".format(w=w_pop, i=self.i, j=self.j, l=self.l))
+
+
 
     def nivo(self, indeks_primera, indeks_nivo, vhod, utezi, vhod_2=None):
         """izracuna za en vhodni primer izhode vseh nevronov v plasti"""
@@ -139,8 +154,8 @@ class Nevronska_mreza(object):
 
     def delta(self,j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
         """Izračunava vse delte za popravljanje napak"""
-        start = "$$\delta_{j}^{{{l}}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
-        start_vals = "$$\delta_{j}^{{{l}}} = {y: 0.2g} \\times (1 - {y: 0.2g})"
+        start = "$$\delta_{j}^{{({l})}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
+        start_vals = "$$\delta_{j}^{{({l})}} = {y: 0.2g} \\times (1 - {y: 0.2g})"
         # računa za zadnji nivo
         if l == 2:
             o_i = izhod_nivo[j]
@@ -150,6 +165,7 @@ class Nevronska_mreza(object):
             vals = start_vals + "\\times ({d} - {y: 0.2g}) = {rez: 0.2g}$$"
             self.text_izhod.append(tmp.format(j=j, l=l))
             self.text_izhod.append(vals.format(j=j, l=l, y=o_i, d=d_i, rez=rez))
+            self.deltas["%d_%d" % (j, l)] = rez
         # računa za ostale nivoje
         else:
             y_j_l = self.y(j, l, vhod)
@@ -178,6 +194,7 @@ class Nevronska_mreza(object):
             vals = vals + ") = {rez: 0.2g}$$"
             self.text_izhod.append(tmp.format(j=j, l=l, l_1=l + 1))
             self.text_izhod.append(vals.format(j=j, l=l, y=y_j_l, rez=rez))
+            self.deltas["%d_%d" % (j, l)]= rez
         return rez
 
 
