@@ -46,22 +46,22 @@ class DeltaLearning(object):
         self.eta = eta
         self.text_output = text_output
         self.epoch_learning = epoch_learning
-        self.neurons = {'logistic':LogisticNeuron}
+        self.neurons = {'logistic': LogisticNeuron}
         if neuron_type in self.neurons:
             self.neuron = self.neurons[neuron_type](self.w, text_output)
         else:
             raise Exception("Neuron type: %s doesn't exist!" % neuron_type)
         self.table = []
         header = ["p"]
-        number_of_weights = len(w)
-        number_of_input_values = number_of_weights - 1# - bias
-        for i in range(1, number_of_input_values):
+        self.number_of_weights = len(w)
+        self.number_of_input_values = self.number_of_weights - 1  # - bias
+        for i in range(1, self.number_of_input_values + 1):
             header.append("\(x_%d^{(p)}\)" % i)
-        header.extend(["\(v^{(p)}\)","\(y^{(p)}\)", "\(d^{(p)}\)"])
-        for i in range(0, number_of_weights):
-            header.append("\(\delta_%d^{(p)}\)" % i)
-        for i in range(0, number_of_weights):
-            header.append("\(\delta_%d\)" % i)
+        header.extend(["\(v^{(p)}\)", "\(y^{(p)}\)", "\(d^{(p)}\)"])
+        for i in range(0, self.number_of_weights):
+            header.append("\(\Delta w_%d^{(p)}\)" % i)
+        for i in range(0, self.number_of_weights):
+            header.append("\(\Delta w_%d\)" % i)
         header.append("\(e^{(p)}\)")
         self.table.append(header)
 
@@ -73,17 +73,26 @@ class DeltaLearning(object):
 # for each learning sample
         for p, x_sample, d_sample in zip(range(1, len(self.x) + 1),
                                          self.x, self.d):
+            table_row = [p]
+            table_row.extend(x_sample[1:])
             print x_sample, d_sample
 # calculate activation v and output y
-            y = self.neuron.get_output(x_sample)
+            y, v = self.neuron.get_output(x_sample)
+            table_row.append(v)
+            table_row.append(y)
+            table_row.append(d_sample[0])
             print y
             delta_w = adjust_weight(p, x_sample, d_sample, self.eta,
                                     y, self.text_output)
             deltas_w.append(delta_w)
+            table_row.extend(delta_w)
+            table_row.extend(sum(deltas_w))
             print delta_w
             e_p = calc_ep(p, d_sample, y, self.text_output)
+            table_row.append(e_p)
             e_ps.append(e_p)
             print e_p
+            self.table.append(table_row)
         text = "$$E = \\frac{1}{2}(e^{(1)}+e^{(2)})$$"
         self.text_output.append(text)
         E = 1 / 2.0 * sum(e_ps)

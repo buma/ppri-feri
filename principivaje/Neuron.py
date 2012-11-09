@@ -39,7 +39,7 @@ class LogisticNeuron(Neuron):
         y = 1.0 / (1.0 + math.exp(-v))
         y = float("%.3g" % y)
         self._output_string(v, y)
-        return y
+        return y, v
 
 if __name__ == "__main__":
     import numpy as np
