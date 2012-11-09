@@ -65,7 +65,7 @@ def my_view(request):
     schema = SchemaNevronskaMreza(validator=validator)
     myform = Form(schema, buttons=('submit',))
     js_tags, css_tags = get_resources(request, myform)
-    result = {'title': u"Nevronska mreža", "js_tags": js_tags, "css_tags": css_tags}
+    result = {'title': u"Nevronska mreža", "js_tags": js_tags, "css_tags": css_tags, "neural": True}
     appstruct = {'utezi_prvi_nivo': [
         (0, 0.2, -0.2, 0),
         (0, 0.1, 0, 0.5),
@@ -125,7 +125,7 @@ def delta_view(request):
     schema = SchemaDeltaAlgorithm(validator=validator)
     myform = Form(schema, buttons=('submit',))
     js_tags, css_tags = get_resources(request, myform)
-    result = {'title': u"Učno pravilo delta", "js_tags": js_tags, "css_tags": css_tags}
+    result = {'title': u"Učno pravilo delta", "js_tags": js_tags, "css_tags": css_tags, "delta":True}
     appstruct = {
         'utezi':[0.1, -0.1, 0.5],
         'vhod': [
