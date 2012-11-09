@@ -20,7 +20,8 @@ class Neuron(object):
         output = map(lambda x: izpis % x, zip(str_w, str_vhod))
         str_output = " + ".join(output)
         v = (self.weight.T * x).sum()
-        str_output = "$$v=" + str_output + " = %.03g$$" % v
+        v = float("%.3g" % v)
+        str_output = "$$v=" + str_output + " = %.3g$$" % v
         self.text_output.append(str_output)
         return v
 
@@ -36,6 +37,7 @@ class LogisticNeuron(Neuron):
     def get_output(self, x):
         v = self._perceptron(x)
         y = 1.0 / (1.0 + math.exp(-v))
+        y = float("%.3g" % y)
         self._output_string(v, y)
         return y
 
