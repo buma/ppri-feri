@@ -76,14 +76,14 @@ class DeltaLearning(object):
             self.text_output.append("<h3>Vzorec %d</h3>" % p)
             table_row = [p]
             table_row.extend(x_sample[1:])
-            print x_sample, d_sample
+            #print x_sample, d_sample
             self.text_output.append(u"<h4>Izračunamo aktivacijo \(v^{(p)}\) in izhod \(y^{(p)}\)</h4>")
 # calculate activation v and output y
             y, v = self.neuron.get_output(x_sample, p)
             table_row.append(v)
             table_row.append(y)
             table_row.append(d_sample[0])
-            print y
+            #print y
             self.text_output.append(
                 u"<h4>Izračuna popravke uteži \(\Delta w^{(p)}\)</h4>")
             delta_w = adjust_weight(p, x_sample, d_sample, self.eta,
@@ -91,13 +91,13 @@ class DeltaLearning(object):
             deltas_w.append(delta_w)
             table_row.extend(delta_w)
             table_row.extend(sum(deltas_w))
-            print delta_w
+            #print delta_w
             self.text_output.append(
                 u"<h4>Izračuna napako vzorca \(e^{(p)}\)</h4>")
             e_p = calc_ep(p, d_sample, y, self.text_output)
             table_row.append(e_p)
             e_ps.append(e_p)
-            print e_p
+            #print e_p
             self.table.append(table_row)
         self.text_output.append(
             u"<h4>Izračuna povprečno napako epohe \(E\)</h4>")
