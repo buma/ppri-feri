@@ -7,7 +7,7 @@ class Neuron(object):
         self.weight = weight
         self.text_output = text_output
 
-    def _perceptron(self, x):
+    def _perceptron(self, x, p=None):
         def to_str(x):
             if x < 0:
                 return "(%0.1g)" % x
@@ -21,24 +21,27 @@ class Neuron(object):
         str_output = " + ".join(output)
         v = (self.weight.T * x).sum()
         v = float("%.3g" % v)
-        str_output = "$$v=" + str_output + " = %.3g$$" % v
+        out = "$$v^{(p)} = \sum_{i=0}^n w_i x_i$$"
+        self.text_output.append(out)
+        str_output = "$$v^{(%d)}=" + str_output + " = %.3g$$"
+        str_output = str_output % (p, v)
         self.text_output.append(str_output)
         return v
 
 
 class LogisticNeuron(Neuron):
 
-    def _output_string(self, x, y):
-        str_output = "$$y = \\frac{1}{1+e^{-v}}$$"
-        str_output_vals = "$$y = \\frac{1}{1+e^{-%0.3g}} = %0.3g$$" % (x, y)
+    def _output_string(self, x, y, p=None):
+        str_output = "$$y^{(p)} = \\frac{1}{1+e^{-v}}$$"
+        str_output_vals = "$$y^{(%d)} = \\frac{1}{1+e^{-%0.3g}} = %0.3g$$" % (p, x, y)
         self.text_output.append(str_output)
         self.text_output.append(str_output_vals)
 
-    def get_output(self, x):
-        v = self._perceptron(x)
+    def get_output(self, x, p):
+        v = self._perceptron(x, p)
         y = 1.0 / (1.0 + math.exp(-v))
         y = float("%.3g" % y)
-        self._output_string(v, y)
+        self._output_string(v, y, p)
         return y, v
 
 if __name__ == "__main__":

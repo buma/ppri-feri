@@ -77,7 +77,7 @@ class DeltaLearning(object):
             table_row.extend(x_sample[1:])
             print x_sample, d_sample
 # calculate activation v and output y
-            y, v = self.neuron.get_output(x_sample)
+            y, v = self.neuron.get_output(x_sample, p)
             table_row.append(v)
             table_row.append(y)
             table_row.append(d_sample[0])
