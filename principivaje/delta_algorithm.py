@@ -1,7 +1,7 @@
+# -*- coding: utf-8 -*-
 from Neuron import LogisticNeuron
 import math
 import numpy as np
-
 
 def adjust_weight(p, x, d, eta, y, text_output):
     text = "$$\Delta w_i^{(p)} = \eta \\times (y^{(p)} - d^{(p)}) \\times x_i^{(p)}$$"
@@ -22,8 +22,6 @@ def calc_ep(p, d, y, text_output):
     e_p = float("%0.3g" % e_p)
     text_output.append(text.format(p=p, d=d[0], y=y, rez=e_p))
     return e_p
-
-
 
 
 class DeltaLearning(object):
@@ -73,32 +71,43 @@ class DeltaLearning(object):
 # for each learning sample
         for p, x_sample, d_sample in zip(range(1, len(self.x) + 1),
                                          self.x, self.d):
+            self.text_output.append("<h3>Vzorec %d</h3>" % p)
             table_row = [p]
             table_row.extend(x_sample[1:])
             print x_sample, d_sample
+            self.text_output.append(u"<h4>Izračunamo aktivacijo \(v^{(p)}\) in izhod \(y^{(p)}\)</h4>")
 # calculate activation v and output y
             y, v = self.neuron.get_output(x_sample, p)
             table_row.append(v)
             table_row.append(y)
             table_row.append(d_sample[0])
             print y
+            self.text_output.append(u"<h4>Izračuna popravke uteži \(\Delta w^{(p)}\)</h4>")
             delta_w = adjust_weight(p, x_sample, d_sample, self.eta,
                                     y, self.text_output)
             deltas_w.append(delta_w)
             table_row.extend(delta_w)
             table_row.extend(sum(deltas_w))
             print delta_w
+            self.text_output.append(u"<h4>Izračuna napako vzorca \(e^{(p)}\)</h4>")
             e_p = calc_ep(p, d_sample, y, self.text_output)
             table_row.append(e_p)
             e_ps.append(e_p)
             print e_p
             self.table.append(table_row)
+        self.text_output.append(u"<h4>Izračuna povprečno napako epohe \(E\)</h4>")
         text = "$$E = \\frac{1}{2}(e^{(1)}+e^{(2)})$$"
         self.text_output.append(text)
         E = 1 / 2.0 * sum(e_ps)
         text = "$$E = \\frac{1}{2}(%.3g + %.3g) = %.3g$$" % (e_ps[0], e_ps[1], E)
         self.text_output.append(text)
-        print sum(deltas_w)
+        delta_all_w = sum(deltas_w)
+        new_w = self.w+delta_all_w
+        self.text_output.append(u"<p>Skupni popravki uteži: \(\Delta w=\{%s\}\)</p>" % \
+                                ", ".join(map(str, delta_all_w)))
+        self.text_output.append(u"<p>Novi utežni vektor \(w=\{%s\}\)</p>" % \
+                                ", ".join(map(str, new_w)))
+
 
         #break
 
