@@ -140,6 +140,30 @@ class SchemaDeltaAlgorithm(colander.MappingSchema):
     paketno_ucenje = colander.SchemaNode(colander.Bool(),
                                          default=True)
 
+    neurons = (
+        ('', '- Select -'),
+        ('logistic', u'Logistična'),
+        #('linear', 'Linearna'),
+        #('step', u'Stopničasta'),
+        ('tlu', 'TLU'),
+    )
+    neuron_type = colander.SchemaNode(colander.String(),
+                                      default='logistic',
+                                      #default='tlu',
+                                      widget=deform.widget.SelectWidget(
+                                          values=neurons)
+                                      )
+    learning_error_values = (
+        ('', '- Select -'),
+        ('mse', 'MSE'),
+        ('cee', 'CEE')
+    )
+    learning_error = colander.SchemaNode(colander.String(),
+                                         default='cee',
+                                         #default='mse',
+                                         widget=deform.widget.SelectWidget(
+                                         values=learning_error_values)
+                                         )
     vhod = SchemaRowsInputDelta(description="Vhodne vrednosti brez biasa",
                                 validator=validate_delta_input)
     zeleni_izhod = SchemaRowsZeleniIzhodDelta(
@@ -147,4 +171,5 @@ class SchemaDeltaAlgorithm(colander.MappingSchema):
         title=u"Želeni izhod"
     )
 
-    utezi = SchemaRowInputDelta(widget=deform.widget.TextInputCSVWidget())
+    utezi = SchemaRowInputDelta(widget=deform.widget.TextInputCSVWidget(),
+                                title=u"Uteži")

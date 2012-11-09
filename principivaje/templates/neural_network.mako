@@ -32,7 +32,7 @@
 	
 	<p>Skripta je namenjena preverjanju računanju učnega algoritma delta.</p>
 
-	<p>Trenutno deluje samo epohalno učenje in CEE preverjanje.</p>
+	<p>Trenutno deluje epohalno in vzorčno učenje s MSE in CEE napako.</p>
 	
 	<p>Privzeti podatki so podatki za nalogo na strani 18/25 na predavanjih.</p>
 

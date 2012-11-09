@@ -140,6 +140,15 @@ def delta_view(request):
             (0.0,),
             (1.0,)
         ]
+        #'utezi': [0.2, -0.3, -0.5, 0],
+        #'vhod': [
+            #(0, 0, 1),
+            #(1, 0, 1)
+        #],
+        #'zeleni_izhod': [
+            #(0.0,),
+            #(1.0,)
+        #]
     }
     if 'submit' in request.POST:
         controls = request.POST.items()
@@ -150,7 +159,9 @@ def delta_view(request):
                                appstruct["vhod"],
                                appstruct["zeleni_izhod"],
                                appstruct["eta"],
-                               epoch_learning=appstruct["paketno_ucenje"]
+                               epoch_learning=appstruct["paketno_ucenje"],
+                               neuron_type=appstruct["neuron_type"],
+                               error_type=appstruct["learning_error"]
                                )
             nn.run()
             result["tabela"] = nn.table

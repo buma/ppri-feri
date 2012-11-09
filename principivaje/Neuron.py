@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import math
 
 
@@ -28,6 +29,9 @@ class Neuron(object):
         self.text_output.append(str_output)
         return v
 
+    def get_d(self, d):
+        return d
+
 
 class LogisticNeuron(Neuron):
 
@@ -43,6 +47,42 @@ class LogisticNeuron(Neuron):
         y = float("%.3g" % y)
         self._output_string(v, y, p)
         return y, v
+
+    def get_derivation(self, y):
+        text = "y^{(p)}(1-y^{(p)})"
+        text_vals = "{y}(1-{y})"
+        vals = y * (1 - y)
+        return text, text_vals, vals
+
+
+class TLU(Neuron):
+
+    def _output_string(self, x, y, p=None):
+        str_output = "$$y^{(p)} = v^{(p)}$$"
+        str_output_vals = "$$y^{(%d)} = %0.3g$$" % (p, y)
+        self.text_output.append(str_output)
+        self.text_output.append(str_output_vals)
+
+    def get_output(self, x, p):
+        v = self._perceptron(x, p)
+        y = v
+        self._output_string(v, y, p)
+        return y, v
+
+    def get_d(self, d):
+        d1 = []
+        for index, _ in enumerate(d):
+            if d[index][0] == 0:
+                self.text_output.append(u"<h5>Popravljanje želenih izhodov ker TLU ni odvedljiv</h5>")
+                self.text_output.append("$$d^{(%d)} = -1$$" % (index + 1,))
+                d1.append([-1])
+            else:
+                d1.append([d[index][0]])
+        return d1
+
+    def get_derivation(self, y):
+        return "", "", 1
+
 
 if __name__ == "__main__":
     import numpy as np
