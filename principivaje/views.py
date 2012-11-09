@@ -34,7 +34,8 @@ def get_resources(request, form=None):
                     ] + js_links_basics + js_links \
                     + ['deform_bootstrap:static/deform_bootstrap.js']
         css_links = ['deform:static/%s' % r for r in css_resources]
-        css_links = css_links_basics + ['deform_bootstrap:static/jquery_chosen/chosen.css'] + css_links
+        css_links = css_links_basics + [
+            'deform_bootstrap:static/jquery_chosen/chosen.css'] + css_links
     js_tags = ['<script type="text/javascript" src="%s"></script>' % link
                for link in map(request.static_url, js_links)]
     css_tags = ['<link rel="stylesheet" href="%s"/>' % link
@@ -44,7 +45,8 @@ def get_resources(request, form=None):
 
 def validator(form, value):
     if len(value['vhod']) != len(value['zeleni_izhod']):
-        exc = colander_invalid(form, u'Vhod in Želeni izhod morata imeti enako število vrstic!')
+        exc = colander_invalid(
+            form, u'Vhod in Želeni izhod morata imeti enako število vrstic!')
         exc['vhod'] = u"Nima enako število vrstic kot želeni izhod!"
         exc['zeleni_izhod'] = u"Nima enako število vrstic kot vhod!"
         raise exc
@@ -52,11 +54,11 @@ def validator(form, value):
         len_vhod = len(value['vhod'][0]) + 1
         len_utezi = len(value['utezi'])
         if len_vhod != len_utezi:
-            exc = colander_invalid(form, u'Število uteži mora biti za eno več kot vhodov')
+            exc = colander_invalid(
+                form, u'Število uteži mora biti za eno več kot vhodov')
             exc['vhod'] = u"Posamezen vhod mora imeti za eno manj vrednosti kot uteži"
             exc['utezi'] = u"Utež mora imeto eno več vrednosti kot posamezen vhod"
             raise exc
-
 
 
 @view_config(route_name='home', renderer='neural_network.mako')
@@ -65,7 +67,8 @@ def my_view(request):
     schema = SchemaNevronskaMreza(validator=validator)
     myform = Form(schema, buttons=('submit',))
     js_tags, css_tags = get_resources(request, myform)
-    result = {'title': u"Nevronska mreža", "js_tags": js_tags, "css_tags": css_tags, "neural": True}
+    result = {'title': u"Nevronska mreža", "js_tags": js_tags,
+              "css_tags": css_tags, "neural": True}
     appstruct = {'utezi_prvi_nivo': [
         (0, 0.2, -0.2, 0),
         (0, 0.1, 0, 0.5),
@@ -125,9 +128,10 @@ def delta_view(request):
     schema = SchemaDeltaAlgorithm(validator=validator)
     myform = Form(schema, buttons=('submit',))
     js_tags, css_tags = get_resources(request, myform)
-    result = {'title': u"Učno pravilo delta", "js_tags": js_tags, "css_tags": css_tags, "delta":True}
+    result = {'title': u"Učno pravilo delta", "js_tags": js_tags,
+              "css_tags": css_tags, "delta": True}
     appstruct = {
-        'utezi':[0.1, -0.1, 0.5],
+        'utezi': [0.1, -0.1, 0.5],
         'vhod': [
             (0.7, 0.4),
             (0.3, 0.8)

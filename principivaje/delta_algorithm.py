@@ -3,13 +3,15 @@ from Neuron import LogisticNeuron
 import math
 import numpy as np
 
+
 def adjust_weight(p, x, d, eta, y, text_output):
     text = "$$\Delta w_i^{(p)} = \eta \\times (y^{(p)} - d^{(p)}) \\times x_i^{(p)}$$"
     text_output.append(text)
     text = "$$\Delta w_{i}^{{({p})}} = {eta} \\times ({y} - {d}) \\times {x} = {rez: 0.3g}$$"
     delta_w = eta * (y - d[0]) * x
     for i in range(len(x)):
-        text_output.append(text.format(p=p, i=i, eta=eta, y=y, d=d[0], x=x[i], rez=delta_w[i]))
+        text_output.append(text.format(
+            p=p, i=i, eta=eta, y=y, d=d[0], x=x[i], rez=delta_w[i]))
         delta_w[i] = float("%0.3g" % delta_w[i])
     return delta_w
 
@@ -27,7 +29,7 @@ def calc_ep(p, d, y, text_output):
 class DeltaLearning(object):
 
     def __init__(self, w, x, d, eta, text_output=[], epoch_learning=True,
-                 neuron_type = 'logistic'):
+                 neuron_type='logistic'):
         """Delta learning algorithm
 
         w - numpy array of weights
@@ -82,37 +84,40 @@ class DeltaLearning(object):
             table_row.append(y)
             table_row.append(d_sample[0])
             print y
-            self.text_output.append(u"<h4>Izračuna popravke uteži \(\Delta w^{(p)}\)</h4>")
+            self.text_output.append(
+                u"<h4>Izračuna popravke uteži \(\Delta w^{(p)}\)</h4>")
             delta_w = adjust_weight(p, x_sample, d_sample, self.eta,
                                     y, self.text_output)
             deltas_w.append(delta_w)
             table_row.extend(delta_w)
             table_row.extend(sum(deltas_w))
             print delta_w
-            self.text_output.append(u"<h4>Izračuna napako vzorca \(e^{(p)}\)</h4>")
+            self.text_output.append(
+                u"<h4>Izračuna napako vzorca \(e^{(p)}\)</h4>")
             e_p = calc_ep(p, d_sample, y, self.text_output)
             table_row.append(e_p)
             e_ps.append(e_p)
             print e_p
             self.table.append(table_row)
-        self.text_output.append(u"<h4>Izračuna povprečno napako epohe \(E\)</h4>")
+        self.text_output.append(
+            u"<h4>Izračuna povprečno napako epohe \(E\)</h4>")
         text = "$$E = \\frac{1}{2}(e^{(1)}+e^{(2)})$$"
         self.text_output.append(text)
         E = 1 / 2.0 * sum(e_ps)
-        text = "$$E = \\frac{1}{2}(%.3g + %.3g) = %.3g$$" % (e_ps[0], e_ps[1], E)
+        text = "$$E = \\frac{1}{2}(%.3g + %.3g) = %.3g$$" % (
+            e_ps[0], e_ps[1], E)
         self.text_output.append(text)
         delta_all_w = sum(deltas_w)
-        new_w = self.w+delta_all_w
-        self.text_output.append(u"<p>Skupni popravki uteži: \(\Delta w=\{%s\}\)</p>" % \
+        new_w = self.w + delta_all_w
+        self.text_output.append(u"<p>Skupni popravki uteži: \(\Delta w=\{%s\}\)</p>" %
                                 ", ".join(map(str, delta_all_w)))
-        self.text_output.append(u"<p>Novi utežni vektor \(w=\{%s\}\)</p>" % \
+        self.text_output.append(u"<p>Novi utežni vektor \(w=\{%s\}\)</p>" %
                                 ", ".join(map(str, new_w)))
 
 
         #break
 
 if __name__ == "__main__":
-    import numpy as np
     #w = np.array([0.2, -0.3, -0.5, 0])
     #x = np.array([[0, 0, 1],
                   #[1, 0, 1]])
