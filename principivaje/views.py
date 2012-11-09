@@ -8,9 +8,11 @@ from deform import (
 
 from .schemes import (
     SchemaNevronskaMreza,
+    SchemaDeltaAlgorithm
 )
 
 from neuralnetwork import Nevronska_mreza
+from delta_algorithm import DeltaLearning
 
 from colander import Invalid as colander_invalid
 
@@ -46,6 +48,15 @@ def validator(form, value):
         exc['vhod'] = u"Nima enako število vrstic kot želeni izhod!"
         exc['zeleni_izhod'] = u"Nima enako število vrstic kot vhod!"
         raise exc
+    if "utezi" in value and len(value['vhod']) > 0:
+        len_vhod = len(value['vhod'][0]) + 1
+        len_utezi = len(value['utezi'])
+        if len_vhod != len_utezi:
+            exc = colander_invalid(form, u'Število uteži mora biti za eno več kot vhodov')
+            exc['vhod'] = u"Posamezen vhod mora imeti za eno manj vrednosti kot uteži"
+            exc['utezi'] = u"Utež mora imeto eno več vrednosti kot posamezen vhod"
+            raise exc
+
 
 
 @view_config(route_name='home', renderer='neural_network.mako')
@@ -106,4 +117,51 @@ def my_view(request):
 def changes(request):
     js_tags, css_tags = get_resources(request)
     result = {'title': u"Changelog", "js_tags": js_tags, "css_tags": css_tags}
+    return result
+
+
+@view_config(route_name='delta', renderer='neural_network.mako')
+def delta_view(request):
+    schema = SchemaDeltaAlgorithm(validator=validator)
+    myform = Form(schema, buttons=('submit',))
+    js_tags, css_tags = get_resources(request, myform)
+    result = {'title': u"Učno pravilo delta", "js_tags": js_tags, "css_tags": css_tags}
+    appstruct = {
+        'utezi':[0.1, -0.1, 0.5],
+        'vhod': [
+            (0.7, 0.4),
+            (0.3, 0.8)
+        ],
+        'zeleni_izhod': [
+            (0.0,),
+            (1.0,)
+        ]
+    }
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = myform.validate(controls)
+            #print appstruct
+            nn = DeltaLearning(appstruct['utezi'],
+                               appstruct["vhod"],
+                               appstruct["zeleni_izhod"],
+                               appstruct["eta"],
+                               epoch_learning=appstruct["paketno_ucenje"]
+                               )
+            nn.run()
+            result["tabela"] = nn.table
+            result["text_izhod"] = nn.text_output
+            print appstruct
+        except ValidationFailure, e:
+            result['form'] = e.render()
+            return result
+        except Exception, e:
+            print e
+            request.ext.flash_error(unicode(e), title="Napaka pri podatkih")
+            result["form"] = myform.render(appstruct=appstruct)
+            return result
+        result["form"] = myform.render(appstruct=appstruct)
+        return result
+    # We are a GET not a POST
+    result["form"] = myform.render(appstruct=appstruct)
     return result

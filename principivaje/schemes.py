@@ -12,6 +12,14 @@ class SchemaRowsZeleniIzhod(colander.SequenceSchema):
     row = SchemaRowZeleniIzhod()
 
 
+class SchemaRowZeleniIzhodDelta(colander.TupleSchema):
+    n_0 = colander.SchemaNode(colander.Float(), validator=colander.Range(0, 1))
+
+
+class SchemaRowsZeleniIzhodDelta(colander.SequenceSchema):
+    row = SchemaRowZeleniIzhodDelta()
+
+
 class SchemaRowVhod(colander.TupleSchema):
     n_0 = colander.SchemaNode(
         colander.Float(), validator=colander.Range(-1, 1))
@@ -97,3 +105,46 @@ class SchemaNevronskaMreza(colander.MappingSchema):
                                  colander=colander.Range(1, 2),
                                  default=1,
                                  description=u"w_i,j^(l) l koordinata uteži")
+
+
+class SchemaRowInputDelta(colander.SequenceSchema):
+    x = colander.SchemaNode(
+        colander.Float(), validator=colander.Range(-1, 1))
+
+
+class SchemaRowsInputDelta(colander.SequenceSchema):
+    row = SchemaRowInputDelta(widget=deform.widget.TextInputCSVWidget())
+
+
+def validate_delta_input(node, value):
+    """Validates inputs and makes sure that all inputs
+    have the same number of inputs"""
+# we get length of all inputs
+    lens = map(len, value)
+    all_same = all(lens[0] == input_len for input_len in lens)
+    #print lens
+    #print all_same
+    if not all_same:
+        raise colander.Invalid(node,
+                               u"Vsi vhodi nimajo enakega števila elementov")
+    return True
+
+
+class SchemaDeltaAlgorithm(colander.MappingSchema):
+
+    eta = colander.SchemaNode(colander.Float(),
+                              validator=colander.Range(0, 1),
+                              default=0.5,
+                              description="Hitrost učenja")
+
+    paketno_ucenje = colander.SchemaNode(colander.Bool(),
+                                         default=True)
+
+    vhod = SchemaRowsInputDelta(description="Vhodne vrednosti brez biasa",
+                                validator=validate_delta_input)
+    zeleni_izhod = SchemaRowsZeleniIzhodDelta(
+        description=u"Kakšen bi moral biti izhod nevrona",
+        title=u"Želeni izhod"
+    )
+
+    utezi = SchemaRowInputDelta(widget=deform.widget.TextInputCSVWidget())

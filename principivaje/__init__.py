@@ -17,6 +17,7 @@ def main(global_config, **settings):
     config.add_static_view('deform_static', 'deform:static')
     config.add_route('home', '/')
     config.add_route('mlp', '/mlp')
+    config.add_route('delta', '/delta')
     config.add_route('changes', '/changes')
     config.scan()
     return config.make_wsgi_app()

@@ -29,8 +29,8 @@ class Neuron(object):
 class LogisticNeuron(Neuron):
 
     def _output_string(self, x, y):
-        str_output = "$$y = \\frac{1}{1+\e^{-x}}$$"
-        str_output_vals = "$$y = \\frac{1}{1+\e^{-%0.3g}} = %0.3g$$" % (x, y)
+        str_output = "$$y = \\frac{1}{1+e^{-v}}$$"
+        str_output_vals = "$$y = \\frac{1}{1+e^{-%0.3g}} = %0.3g$$" % (x, y)
         self.text_output.append(str_output)
         self.text_output.append(str_output_vals)
 
