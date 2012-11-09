@@ -35,6 +35,21 @@ def delta(w, x, d, eta, text_output=[], epoch_learning=True):
     log_neuron = LogisticNeuron(w, text_output)
     deltas_w = []
     e_ps = []
+    table = []
+    header = ["p"]
+    number_of_weights = len(w)
+    number_of_input_values = number_of_weights - 1# - bias
+    for i in range(1, number_of_input_values):
+        header.append("\(x_%d^{(p)}\)" % i)
+    header.extend(["\(v^{(p)}\)","\(y^{(p)}\)", "\(d^{(p)}\)"])
+    for i in range(0, number_of_weights):
+        header.append("\(\delta_%d^{(p)}\)" % i)
+    for i in range(0, number_of_weights):
+        header.append("\(\delta_%d\)" % i)
+    header.append("\(e^{(p)}\)")
+    table.append(header)
+    #for head in chain(["p"],
+            #header.append("\(x_%d^{(p)}\)" % i)
 # for each learning sample
     for p, x_sample, d_sample in zip(range(1, len(x) + 1), x, d):
         print x_sample, d_sample
@@ -53,6 +68,7 @@ def delta(w, x, d, eta, text_output=[], epoch_learning=True):
     text = "$$E = \\frac{1}{2}(%.3g + %.3g) = %.3g" % (e_ps[0], e_ps[1], E)
     text_output.append(text)
     print sum(deltas_w)
+    return table
 
         #break
 
@@ -75,3 +91,4 @@ if __name__ == "__main__":
     print delta(w, x, d, eta, text_output, epoch_learning=True)
     for text in text_output:
         print text
+    print
