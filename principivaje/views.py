@@ -174,6 +174,7 @@ def hopfield_view(request):
     result["form"] = myform.render(appstruct=appstruct)
     return result
 
+
 @view_config(route_name='hop_learn', renderer='neural_network.mako')
 def hopfield_learn_view(request):
     schema = SchemaHopfieldLearn()
@@ -183,7 +184,7 @@ def hopfield_learn_view(request):
               "css_tags": css_tags, "hopfield_learn": True}
     appstruct = {
         'vhod': [[0, 0, 1, 1],
-                  [0, 1, 0, 1]]
+                 [0, 1, 0, 1]]
     }
     if 'submit' in request.POST:
         controls = request.POST.items()
@@ -218,10 +219,10 @@ def hopfield_energy_view(request):
               "css_tags": css_tags, "hopfield_energy": True}
     appstruct = {
         'vhod': [[1, 1, -1, -1]],
-        'utez':[[0,1,0,-2],
-                [1,0,-2,0],
-                [0,-2,0,-3],
-                [-2,0,-3,0]]
+        'utez': [[0, 1, 0, -2],
+                 [1, 0, -2, 0],
+                 [0, -2, 0, -3],
+                 [-2, 0, -3, 0]]
     }
     if 'submit' in request.POST:
         controls = request.POST.items()
@@ -248,6 +249,7 @@ def hopfield_energy_view(request):
     result["form"] = myform.render(appstruct=appstruct)
     return result
 
+
 @view_config(route_name='delta', renderer='neural_network.mako')
 def delta_view(request):
     schema = SchemaDeltaAlgorithm(validator=validator)
@@ -267,12 +269,12 @@ def delta_view(request):
         ]
         #'utezi': [0.2, -0.3, -0.5, 0],
         #'vhod': [
-            #(0, 0, 1),
-            #(1, 0, 1)
+        #(0, 0, 1),
+        #(1, 0, 1)
         #],
         #'zeleni_izhod': [
-            #(0.0,),
-            #(1.0,)
+        #(0.0,),
+        #(1.0,)
         #]
     }
     if 'submit' in request.POST:
