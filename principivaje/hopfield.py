@@ -19,6 +19,7 @@ class Hopfield(object):
                                                        self.number_of_weights + 1)]
         header = weights_label + ["Oznaka"] + weights_label + ["Oznaka"]
         self.table.append(header)
+        self.text_output.append(u"<h2>Sinhrono učenje</h2>")
 
     def y_i(self, v_i, y_before):
         retval = None
