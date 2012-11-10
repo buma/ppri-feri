@@ -44,6 +44,13 @@
 	<p>Trenutno deluje sinhrono učenje.</p>
 	
 	<p>Privzeti podatki so podatki za nalogo na strani 4 na predavanjih.</p>
+	
+	<div class="alert alert-warning alert-block">
+	<button type="button" class="close" data-dismiss="alert">×</button>
+	<h4>Opozorilo</h4>
+
+		<p>>Formula za \(v_i\) je na predavanjih podana kot \(v_i=\sum_{i=1}^{n}w_{i j}y_j(t-1)\) jaz uporabljam \(v_i=\sum_{i=1}^{n}w_{i j}y_i(t-1)\), ker drugače nevem kako bi se \(y_j\) računal</p>
+	</div>
 
 %endif
 
@@ -71,7 +78,7 @@ ${form|n}
 % endif
 
 % if hopfield:
-	<p>To: <span class="badge badge-important">5</span> označuje stabilno stanje</p>
+	<p><span class="badge badge-important">5</span> označuje stabilno stanje</p>
 % endif
 
 % if tabela:

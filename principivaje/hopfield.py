@@ -50,8 +50,9 @@ class Hopfield(object):
         str_output = " + ".join(output)
         y = np.array(y)
         v = (self.weight[:, i].T * y).sum()
-        text = "$$v_i=\sum_{i=1}^{%d}w_{i j}y_j(t-1)$$" % self.number_of_weights
-        self.text_output.append(text)
+        if len(self.table) == 1:
+            text = "$$v_i=\sum_{i=1}^{%d}w_{i j}y_i(t-1)$$" % self.number_of_weights
+            self.text_output.append(text)
         text = "$$v_%d=" + str_output + " = %d$$"
         self.text_output.append(text % (i + 1, v))
         return v
