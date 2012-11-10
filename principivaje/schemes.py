@@ -183,7 +183,8 @@ class SchemaDeltaAlgorithm(colander.MappingSchema):
 
 class SchemaHopfield(colander.MappingSchema):
     utez = SchemaRowsWeightHop(description=u"Utežna matrika W",
-                               validator=validate_delta_input)
+                               validator=validate_delta_input,
+                               title=u"Utež")
     functions = (
         (0, u'Funkcija 1'),
         #('linear', 'Linearna'),
