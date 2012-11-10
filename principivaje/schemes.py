@@ -199,3 +199,6 @@ class SchemaHopfield(colander.MappingSchema):
                                         values=functions),
                                         title=u"Osveževalna funkcija"
                                         )
+class SchemaHopfieldLearn(colander.MappingSchema):
+    vhod = SchemaRowsWeightHop(description=u"Vhod",
+                               validator=validate_delta_input)

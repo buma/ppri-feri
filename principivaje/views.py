@@ -10,6 +10,7 @@ from .schemes import (
     SchemaNevronskaMreza,
     SchemaDeltaAlgorithm,
     SchemaHopfield,
+    SchemaHopfieldLearn
 )
 
 from neuralnetwork import Nevronska_mreza
@@ -142,10 +143,44 @@ def hopfield_view(request):
         try:
             appstruct = myform.validate(controls)
             #print appstruct
-            nn = Hopfield(appstruct['function_type'])
+            nn = Hopfield(appstruct['function_type'], text_output=[])
             nn.weight_matrix = appstruct['utez']
             nn.get_stable_states()
             result["tabela"] = nn.table
+            result["text_izhod"] = nn.text_output
+            #print appstruct
+        except ValidationFailure, e:
+            result['form'] = e.render()
+            return result
+        except Exception, e:
+            #print e
+            request.ext.flash_error(unicode(e), title="Napaka pri podatkih")
+            result["form"] = myform.render(appstruct=appstruct)
+            return result
+        result["form"] = myform.render(appstruct=appstruct)
+        return result
+    # We are a GET not a POST
+    result["form"] = myform.render(appstruct=appstruct)
+    return result
+
+@view_config(route_name='hop_learn', renderer='neural_network.mako')
+def hopfield_learn_view(request):
+    schema = SchemaHopfieldLearn()
+    myform = Form(schema, buttons=('submit',))
+    js_tags, css_tags = get_resources(request, myform)
+    result = {'title': u"Hopfield učenje", "js_tags": js_tags,
+              "css_tags": css_tags, "hopfield_learn": True}
+    appstruct = {
+        'vhod': [[0, 0, 1, 1],
+                  [0, 1, 0, 1]]
+    }
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = myform.validate(controls)
+            #print appstruct
+            nn = Hopfield(text_output=[])
+            nn.learn(appstruct['vhod'])
             result["text_izhod"] = nn.text_output
             #print appstruct
         except ValidationFailure, e:

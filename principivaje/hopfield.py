@@ -15,11 +15,8 @@ class Hopfield(object):
         self.function_type = function_type
         if function_type == 0:
             self.y_func = self.y_i_0
-            self.text_output.append(r"$$y =  \left\{\begin{matrix} 0 & \mbox {if } v < 0, \\ 1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$")
         elif function_type == 1:
             self.y_func = self.y_i_1
-            self.text_output.append(r"$$y =  \left\{\begin{matrix} -1 & \mbox {if } v < 0, \\ +1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$")
-            self.text_output.append(u'<span class="label label-warning">Opozorilo</span>Ta funkcija je še v beta stanju. Nevem namreč kako računat oznake</p>')
         else:
             raise Exception("Invalid function: %d!" % (function_type,))
         self.table = []
@@ -91,7 +88,13 @@ class Hopfield(object):
     def get_stable_states(self):
         if self.weight is None:
             raise Exception("Weight matrix is empty!")
-        self.text_output.append(u"<h2>Sinhrono pridobivanje stabilnih stanj</h2>")
+        self.text_output.append(
+            u"<h2>Sinhrono pridobivanje stabilnih stanj</h2>")
+        if self.function_type == 0:
+            self.text_output.append(r"$$y =  \left\{\begin{matrix} 0 & \mbox {if } v < 0, \\ 1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$")
+        elif self.function_type == 1:
+            self.text_output.append(r"$$y =  \left\{\begin{matrix} -1 & \mbox {if } v < 0, \\ +1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$")
+            self.text_output.append(u'<span class="label label-warning">Opozorilo</span>Ta funkcija je še v beta stanju. Nevem namreč kako računat oznake</p>')
         self.number_of_weights = len(self.weight)
         weights_label = ["\(y_%d\)" % i for i in range(1,
                                                        self.number_of_weights + 1)]
@@ -109,7 +112,8 @@ class Hopfield(object):
                 y_i = self.y_func(v_i, input_y)
                 table_row.append(y_i)
             if self.function_type == 0:
-                oznaka_bin = "".join(map(str, table_row[-self.number_of_weights:]))
+                oznaka_bin = "".join(
+                    map(str, table_row[-self.number_of_weights:]))
                 oznaka = int(oznaka_bin, 2)
                 if oznaka == index:
                     oznaka = {'val': oznaka}
@@ -119,14 +123,81 @@ class Hopfield(object):
 
             self.table.append(table_row)
 
+    def convert_inputs(self, inputs):
+        text = "$$y_{i,j} = \mathop{\mathrm{sgn}}(x_{i,j} - 0.5)$$"
+        self.text_output.append(text)
+        text = "$${x}_{i}=({xes}) = ({xvals})$$"
+        y_ij = np.sign(inputs - 0.5)
+        for p, one_input, one_output in zip(xrange(1,len(inputs) + 1), inputs, y_ij):
+            xes = ",".join(["x_{%d,%d}" % (p,i + 1) for i in range(self.N)])
+            xvals = ",".join(map(str,one_input))
+            self.text_output.append(text.format(x="x", xes=xes, i=p,xvals=xvals))
+            yes = ",".join(["y_{%d,%d}" % (p,i + 1) for i in range(self.N)])
+            yvals = ",".join(map(lambda x: str(int(x)),one_output))
+            self.text_output.append(text.format(x="y", xes=yes, i=p, xvals=yvals))
+        return y_ij
+
+    def learn(self, inputs):
+        self.text_output.append(u"<h2>Učenje Hopfieldove mreže z Hebbovim učnim pravilom</h2>")
+
+        inputs = np.array(inputs)
+        self.N = inputs.shape[1]
+        p = inputs.shape[0]
+        converted_inputs = self.convert_inputs(inputs)
+        self.weight = np.zeros((self.N, self.N))
+        text = "$$w_{{{i},{j}}}=\\frac{{1}}{{{N}}}\sum_{{k=1}}^{p}y_{{k,{i}}}y_{{k,{j}}}$$"
+        text_vals = "$$w_{{{i},{j}}}=\\frac{{1}}{{{N}}} ("
+        text_bet_vals = "y_{{{k},{i}}} \cdot y_{{{k},{j}}}"
+        text_cdot = "{y1:0g} \cdot {y2:0g}"
+        text_0 = "$$w_{{{i},{j}}} = 0$$"
+        for j in xrange(0, self.N):
+            for i in xrange(j, self.N):
+                if i != j:
+                    weight = 0
+                    text_out = []
+                    text_vals_out = []
+                    for k, one_input in enumerate(converted_inputs):
+                        weight += one_input[i] * one_input[j]
+                        text_out.append(text_bet_vals.format(k=k + 1, i=i + 1, j=j + 1))
+                        text_vals_out.append(text_cdot.format(y1=one_input[i], y2=one_input[j]))
+
+                    text_vals_start = text_vals.format(i=i + 1, j=j + 1, N=self.N)
+                    text_write = text_vals_start + " + ".join(text_out) + ")$$"
+                    text_write_values = text_vals_start + " + ".join(text_vals_out) + ") = {rez:0g}$$".format(rez=weight)
+                    self.text_output.append(text.format(i=i + 1, j=j + 1, N=self.N, p=p))
+                    self.text_output.append(text_write)
+                    self.text_output.append(text_write_values)
+                    self.weight[i,j] = weight
+                    self.weight[j,i] = weight
+                else:
+                    self.text_output.append(text_0.format(i=i + 1, j=j + 1))
+
+        self.pretty_weight = self.weight.copy()
+        self.text_output.append(u"<h4>Izračunano je za levo spodnjo diagonalo. Matrika je simetrična</h4>")
+        weight_text = "$$W = \\frac{1}{%d} \\begin{bmatrix} " % (self.N,)
+        weight_lines = []
+        for line in self.weight:
+            str_line = " & ".join(map(lambda x: str(int(x)), line))
+            weight_lines.append(str_line)
+        weight_text += "\\\\".join(weight_lines) + "\\end{bmatrix}$$"
+        self.text_output.append(weight_text)
+
+        self.weight *= 1.0/self.N
+
+
 if __name__ == "__main__":
     w = [[0, 1, -1],
          [1, 0, 1],
          [-1, 1, 0]]
+    vhod = [[0, 0, 1, 1],
+            [0, 1, 0, 1]]
     text_output = []
 
-    hop = Hopfield(text_output)
-    hop.weight_matrix = w
-    hop.run()
-    for text in hop.table:
+    hop = Hopfield(text_output=text_output)
+    hop.learn(vhod)
+    print hop.weight_matrix
+    print hop.pretty_weight
+    #hop.weight_matrix = w
+    #hop.run()
+    for text in hop.text_output:
         print text

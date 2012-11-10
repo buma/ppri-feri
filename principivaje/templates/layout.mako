@@ -36,7 +36,16 @@
           </a>
 	  <ul class="nav">
 		  <li><a href="${request.route_url('delta')}">Delta algoritem</a></li>
-		  <li><a href="${request.route_url('hop')}">Hopfield</a></li>
+		  <li class="dropdown">
+		  	<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				Hopfield
+				<b class="caret"></b>
+			</a>
+			<ul class="dropdown-menu">
+				<li><a href="${request.route_url('hop')}">Stanja</a></li>
+				<li><a href="${request.route_url('hop_learn')}">Učenje</a></li>
+			</ul>
+			</li>
 		  <li><a href="${request.route_url('mlp')}">Nevronske mreža</a></li>
 		  <li><a href="${request.route_url('changes')}">Changelog</a></li>
 	  </ul>
