@@ -5,14 +5,13 @@ from itertools import product as iproduct
 
 class Hopfield(object):
 
-    def __init__(self, w, function_type=0, text_output=[]):
+    def __init__(self, function_type=0, text_output=[]):
         """Delta learning algorithm
 
         w - numpy array of weights
         """
         self.text_output = text_output
-        self.text_output.append(u"<h2>Sinhrono učenje</h2>")
-        self.weight = np.array(w)
+        self.weight = None
         self.function_type = function_type
         if function_type == 0:
             self.y_func = self.y_i_0
@@ -24,11 +23,16 @@ class Hopfield(object):
         else:
             raise Exception("Invalid function: %d!" % (function_type,))
         self.table = []
-        self.number_of_weights = len(w)
-        weights_label = ["\(y_%d\)" % i for i in range(1,
-                                                       self.number_of_weights + 1)]
-        header = weights_label + ["Oznaka"] + weights_label + ["Oznaka"]
-        self.table.append(header)
+
+    @property
+    def weight_matrix(self):
+        """Weight matrix property"""
+        return self.weight
+
+    @weight_matrix.setter
+    def weight_matrix(self, value):
+        #:TODO error checking
+        self.weight = np.array(value)
 
     def y_i_1(self, v_i, y_before):
         retval = None
@@ -84,7 +88,15 @@ class Hopfield(object):
         self.text_output.append(text % (i + 1, v))
         return v
 
-    def run(self):
+    def get_stable_states(self):
+        if self.weight is None:
+            raise Exception("Weight matrix is empty!")
+        self.text_output.append(u"<h2>Sinhrono pridobivanje stabilnih stanj</h2>")
+        self.number_of_weights = len(self.weight)
+        weights_label = ["\(y_%d\)" % i for i in range(1,
+                                                       self.number_of_weights + 1)]
+        header = weights_label + ["Oznaka"] + weights_label + ["Oznaka"]
+        self.table.append(header)
         truth_table = list(
             iproduct([0, 1], repeat=int(self.number_of_weights)))
         for index, input_row in enumerate(truth_table):
@@ -113,7 +125,8 @@ if __name__ == "__main__":
          [-1, 1, 0]]
     text_output = []
 
-    hop = Hopfield(w, text_output)
+    hop = Hopfield(text_output)
+    hop.weight_matrix = w
     hop.run()
     for text in hop.table:
         print text
