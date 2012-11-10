@@ -64,7 +64,7 @@ class Hopfield(object):
         self.text_output.append(text)
         return retval
 
-    def v_i(self, i, y):
+    def v_i(self, i, j, y):
         def to_str(x):
             if x < 0:
                 return "(%d)" % x
@@ -77,10 +77,19 @@ class Hopfield(object):
         output = map(lambda x: izpis % x, zip(str_w, str_vhod))
         str_output = " + ".join(output)
         y = np.array(y)
+# this is basically a matrix multiplication
+# take one row of inputs and multiply it with weights in column i
+# and we get rezult of at v_i in the same row as row of inputs
         v = (self.weight[:, i].T * y).sum()
         if len(self.table) == 1:
             text = "$$v_i=\sum_{i=1}^{%d}w_{i j}y_i(t-1)$$" % self.number_of_weights
             self.text_output.append(text)
+        w_y = "w_{{{r},{j}}} y_{r}(t-1)"
+        long_part = []
+        for r in range(self.number_of_weights):
+            long_part.append(w_y.format(r=r + 1,j=i + 1))
+        text_long = "$$v_%d = " + " + ".join(long_part) + "$$"
+        self.text_output.append(text_long % (i + 1, ))
         text = "$$v_%d=" + str_output + " = %d$$"
         self.text_output.append(text % (i + 1, v))
         return v
@@ -108,7 +117,7 @@ class Hopfield(object):
             table_row.extend(input_row)
             table_row.append(index)
             for i, input_y in enumerate(input_row):
-                v_i = self.v_i(i, input_row)
+                v_i = self.v_i(i, index + 1, input_row)
                 y_i = self.y_func(v_i, input_y)
                 table_row.append(y_i)
             if self.function_type == 0:
