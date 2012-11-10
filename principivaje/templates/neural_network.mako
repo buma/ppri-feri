@@ -36,6 +36,15 @@
 	
 	<p>Privzeti podatki so podatki za nalogo na strani 18/25 na predavanjih.</p>
 
+% elif hopfield:
+	<h1>Iskanje stabilnih stanj v Hopfieldovi mreži</h1>
+	
+	<p>Skripta je namenjena preverjanju računanju stabilnih stanj v hopfieldovi mreži.</p>
+
+	<p>Trenutno deluje sinhrono učenje.</p>
+	
+	<p>Privzeti podatki so podatki za nalogo na strani 4 na predavanjih.</p>
+
 %endif
 
 <div class="alert alert-info alert-block">
@@ -61,8 +70,12 @@ ${form|n}
 	% endfor
 % endif
 
+% if hopfield:
+	<p>To: <span class="badge badge-important">5</span> označuje stabilno stanje</p>
+% endif
+
 % if tabela:
-	<table class="table">
+	<table class="table table-stripped">
 		<thead>
 			<tr>
 				% for th in tabela[0]:
@@ -74,7 +87,12 @@ ${form|n}
 			% for row in tabela[1:]:
 				<tr>
 					% for td in row:
-						<td>${td}</td>
+						% if isinstance(td, dict):
+							<td><span class="badge badge-important" title="Stabilno stanje">${td["val"]}</span></td>
+						% else:
+							<td>${td}</td>
+						% endif
+
 					% endfor
 				</tr>
 			% endfor

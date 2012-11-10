@@ -8,11 +8,13 @@ from deform import (
 
 from .schemes import (
     SchemaNevronskaMreza,
-    SchemaDeltaAlgorithm
+    SchemaDeltaAlgorithm,
+    SchemaHopfield,
 )
 
 from neuralnetwork import Nevronska_mreza
 from delta_algorithm import DeltaLearning
+from hopfield import Hopfield
 
 from colander import Invalid as colander_invalid
 
@@ -122,6 +124,43 @@ def changes(request):
     result = {'title': u"Changelog", "js_tags": js_tags, "css_tags": css_tags}
     return result
 
+
+@view_config(route_name='hop', renderer='neural_network.mako')
+def hopfield_view(request):
+    schema = SchemaHopfield()
+    myform = Form(schema, buttons=('submit',))
+    js_tags, css_tags = get_resources(request, myform)
+    result = {'title': u"Hopfield", "js_tags": js_tags,
+              "css_tags": css_tags, "hopfield": True}
+    appstruct = {
+        'utez': [[0, 1, -1],
+                 [1, 0, 1],
+                 [-1, 1, 0]]
+    }
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = myform.validate(controls)
+            #print appstruct
+            nn = Hopfield(appstruct['utez']
+                               )
+            nn.run()
+            result["tabela"] = nn.table
+            result["text_izhod"] = nn.text_output
+            #print appstruct
+        except ValidationFailure, e:
+            result['form'] = e.render()
+            return result
+        except Exception, e:
+            #print e
+            request.ext.flash_error(unicode(e), title="Napaka pri podatkih")
+            result["form"] = myform.render(appstruct=appstruct)
+            return result
+        result["form"] = myform.render(appstruct=appstruct)
+        return result
+    # We are a GET not a POST
+    result["form"] = myform.render(appstruct=appstruct)
+    return result
 
 @view_config(route_name='delta', renderer='neural_network.mako')
 def delta_view(request):

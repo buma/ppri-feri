@@ -116,6 +116,15 @@ class SchemaRowsInputDelta(colander.SequenceSchema):
     row = SchemaRowInputDelta(widget=deform.widget.TextInputCSVWidget())
 
 
+class SchemaRowWeightHop(colander.SequenceSchema):
+    x = colander.SchemaNode(
+        colander.Int(), validator=colander.Range(-1, 1))
+
+
+class SchemaRowsWeightHop(colander.SequenceSchema):
+    row = SchemaRowWeightHop(widget=deform.widget.TextInputCSVWidget())
+
+
 def validate_delta_input(node, value):
     """Validates inputs and makes sure that all inputs
     have the same number of inputs"""
@@ -173,3 +182,8 @@ class SchemaDeltaAlgorithm(colander.MappingSchema):
 
     utezi = SchemaRowInputDelta(widget=deform.widget.TextInputCSVWidget(),
                                 title=u"Uteži")
+
+
+class SchemaHopfield(colander.MappingSchema):
+    utez = SchemaRowsWeightHop(description=u"Utežna matrika W",
+                               validator=validate_delta_input)
