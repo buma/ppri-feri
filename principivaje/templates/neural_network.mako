@@ -44,6 +44,14 @@
 	<p>Trenutno deluje sinhrono učenje.</p>
 	
 	<p>Privzeti podatki so podatki za nalogo na strani 4 na predavanjih.</p>
+
+	<p>Stvar je v bistvu zelo preprosta:</p>
+	<ul>
+		<li>vzamemo matriko uteži v tem primeru ima velikost 3x3</li>
+		<li>vzamemo matriko vseh vhodov v tem primeru ima velikost 8x3 oz \(2^n \times n\) \(n\) je velikost uteži</li>
+		<li>Matriki matrično pomnožimo (velikosti so \((8x3) \times (3x3)\)) in dobimo matriko \(v_i\) velikosti 8x3</li>
+	</ul>
+	<p>Sedaj moramo samo še matriko \(v_i\) pretvorit v \(y_i\) s pomočjo Funkcije 1 ali 2. Odvisno od navodil</p>
 	
 	<div class="alert alert-warning alert-block">
 	<button type="button" class="close" data-dismiss="alert">×</button>
