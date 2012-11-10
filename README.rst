@@ -13,6 +13,7 @@ Features
 * Nevronska mreža z vzvratnim prenosom napake (Backpropagation) z paketnim učenjem
 * Hopfieldova nevronska mreža
 * Učenje Hopfieldove nevronske mreže
+* Računanje energijske funkcije Hopfieldove nevronske mreže
 * Učenje nevrona z vzratnim prenosom napake s CEE in MSE napako z logistično in TLU funkcijo
 
 Installation
