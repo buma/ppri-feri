@@ -94,6 +94,56 @@ class Hopfield(object):
         self.text_output.append(text % (i + 1, v))
         return v
 
+    def calc_energy(self, inputs, multiply_with=1):
+        if self.weight is None:
+            raise Exception("Weight matrix is empty!")
+        inputs = np.array(inputs)
+        for vhod_number, one_input in enumerate(inputs):
+            self.text_output.append("<h3>Vhod %d</h3>" % (vhod_number + 1,))
+            self.N = len(one_input)
+            text = "$$y=({xes}) = ({xvals})$$"
+            yes = ",".join(["y_{%d}" % (i + 1) for i in range(self.N)])
+            yvals = ",".join(map(lambda x: str(int(x)),one_input))
+            self.text_output.append(text.format(xes=yes, xvals=yvals))
+
+            weight_text = "$$W = \\frac{1}{%d} \\begin{bmatrix} " % (self.N,)
+            weight_lines = []
+            for line in self.weight:
+                str_line = " & ".join(map(lambda x: str(int(x)), line))
+                weight_lines.append(str_line)
+            weight_text += "\\\\".join(weight_lines) + "\\end{bmatrix}$$"
+            self.text_output.append(weight_text)
+
+            text_start = "$$E=-\\frac{1}{2} "
+            text = text_start + "\sum_{i=1}^N \sum_{j=1}^N w_{i,j} y_i y_j$$"
+            if vhod_number == 0:
+                self.text_output.append(u"<div class=\"alert alert-info\"><strong>Info</strong> Pri množenju uporabimo samo neničelne komponente dela utežne matrike nad diagonalo.</div>")
+                self.text_output.append(text)
+            text_vals = "w_{{{i},{j}}} \cdot y_{i} \cdot y_{j}"
+            text_numbers = "%0g \\times %0g \\times %0g"
+            text_wyy = []
+            text_numbers_list = []
+            E = -1/2.
+            tmp = 0
+            for i in range(self.N):
+                for j in range(i + 1, self.N):
+                    if self.weight[i, j] != 0:
+                        tmp+=self.weight[i,j] * one_input[i] * one_input[j]
+                        text_wyy.append(text_vals.format(i=i + 1, j=j + 1))
+                        text_numbers_list.append(text_numbers % (self.weight[i,j], one_input[i], one_input[j]))
+            E*=1.0/self.N*2
+            text_val = text_start + "( " + " + ".join(text_wyy) + ")$$"
+            self.text_output.append(text_val)
+            if vhod_number == 0:
+                self.text_output.append(u"Z \(2\) množimo, ker je spodnji del matrike identičen.")
+                self.text_output.append(u"Z \(\\frac{1}{N}\) množimo, da dobimo polne vrednosti utežne matrike.")
+            text_num = text_start + " \cdot \\frac{1}{%d}" % (self.N) + \
+                    " \cdot 2 \cdot (" + " + ".join(text_numbers_list) + \
+                    ") = %0.3g$$" % E
+            self.text_output.append(text_num)
+
+
+
     def get_stable_states(self):
         if self.weight is None:
             raise Exception("Weight matrix is empty!")
@@ -202,11 +252,17 @@ if __name__ == "__main__":
             [0, 1, 0, 1]]
     text_output = []
 
+    w = [[0,1,0,-2],
+        [1,0,-2,0],
+        [0,-2,0,-3],
+        [-2,0,-3,0]]
+
     hop = Hopfield(text_output=text_output)
-    hop.learn(vhod)
-    print hop.weight_matrix
-    print hop.pretty_weight
-    #hop.weight_matrix = w
+    #hop.learn(vhod)
+    #print hop.weight_matrix
+    #print hop.pretty_weight
+    hop.weight_matrix = w
+    hop.calc_energy([[1,1,-1,-1]], 1/4.)
     #hop.run()
     for text in hop.text_output:
         print text

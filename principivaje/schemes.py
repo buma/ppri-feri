@@ -115,7 +115,7 @@ class SchemaRowsInputDelta(colander.SequenceSchema):
 
 class SchemaRowWeightHop(colander.SequenceSchema):
     x = colander.SchemaNode(
-        colander.Int(), validator=colander.Range(-1, 1))
+        colander.Int(), validator=colander.Range(-100, 100))
 
 
 class SchemaRowsWeightHop(colander.SequenceSchema):
@@ -199,6 +199,23 @@ class SchemaHopfield(colander.MappingSchema):
                                         values=functions),
                                         title=u"Osveževalna funkcija"
                                         )
+
+
 class SchemaHopfieldLearn(colander.MappingSchema):
     vhod = SchemaRowsWeightHop(description=u"Vhod",
                                validator=validate_delta_input)
+
+
+class SchemaHopfieldEnergy(colander.MappingSchema):
+    vhod = SchemaRowsWeightHop(description=u"Vhod",
+                               validator=validate_delta_input)
+
+    #multiply = colander.SchemaNode(colander.Float(),
+                                   #default=1,
+                                   #title=u"Skupni faktor uteži",
+                                   #description=u"Pomnoži vse uteži s tem številom. Uporabljen zaradi lepših števil"
+                                   #)
+
+    utez = SchemaRowsWeightHop(description=u"Utežna matrika W. Matrika se sama pomnoži z \(\\frac{1}{N}\). Pri čemer je \(N\) število stolpcev oz. vrstic.",
+                               validator=validate_delta_input,
+                               title=u"Utež")

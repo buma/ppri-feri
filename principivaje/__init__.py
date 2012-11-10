@@ -21,5 +21,6 @@ def main(global_config, **settings):
     config.add_route('changes', '/changes')
     config.add_route('hop', '/hopfield')
     config.add_route('hop_learn', '/hopfield/learn')
+    config.add_route('hop_energy', '/hopfield/energy')
     config.scan()
     return config.make_wsgi_app()

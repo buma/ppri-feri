@@ -69,6 +69,14 @@
 	<p>Mreža dobi vhode in se nato nauči matriko uteži</p>
 
 	<p>Privzeti podatki so podani za nalogo na strani 8 na predavanjih.</p>
+% elif hopfield_energy:
+	<h1>Računanje energije Hopfieldove mreže</h1>
+
+	<p>Mreža dobi vhode in matriko uteži in vrne Energijsko funkcijo</p>
+
+	<p>Privzeti podatki so podani za nalogo na strani 10 na predavanjih.</p>
+
+	<p>Pri vnosu uteži so predvidena cela števila. Matrika se pomnoži sama z \(\frac{1}{N}\)</p>
 %endif
 
 

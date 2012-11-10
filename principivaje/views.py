@@ -10,7 +10,8 @@ from .schemes import (
     SchemaNevronskaMreza,
     SchemaDeltaAlgorithm,
     SchemaHopfield,
-    SchemaHopfieldLearn
+    SchemaHopfieldLearn,
+    SchemaHopfieldEnergy,
 )
 
 from neuralnetwork import Nevronska_mreza
@@ -61,6 +62,16 @@ def validator(form, value):
                 form, u'Število uteži mora biti za eno več kot vhodov')
             exc['vhod'] = u"Posamezen vhod mora imeti za eno manj vrednosti kot uteži"
             exc['utezi'] = u"Utež mora imeto eno več vrednosti kot posamezen vhod"
+            raise exc
+# :FIXME ta validator ne dela
+    if "utez" in value and "vhod" in value and len(value['vhod']) > 0:
+        len_vhod = len(value['vhod'][0])
+        len_utez = len(value['utez'])
+        if len_vhod != len_utez:
+            exc = colander_invalid(
+                form, u'Število vrstic in stolcev uteži mora biti enako kot vrednosti v vhodu')
+            exc['vhod'] = u"Posamezen vhod mora imeti enko vrednosti kot je uteži"
+            exc['utezi'] = u"Utež mora imeti enako vrednosti kot posamezen vhod"
             raise exc
 
 
@@ -181,6 +192,46 @@ def hopfield_learn_view(request):
             #print appstruct
             nn = Hopfield(text_output=[])
             nn.learn(appstruct['vhod'])
+            result["text_izhod"] = nn.text_output
+            #print appstruct
+        except ValidationFailure, e:
+            result['form'] = e.render()
+            return result
+        except Exception, e:
+            #print e
+            request.ext.flash_error(unicode(e), title="Napaka pri podatkih")
+            result["form"] = myform.render(appstruct=appstruct)
+            return result
+        result["form"] = myform.render(appstruct=appstruct)
+        return result
+    # We are a GET not a POST
+    result["form"] = myform.render(appstruct=appstruct)
+    return result
+
+
+@view_config(route_name='hop_energy', renderer='neural_network.mako')
+def hopfield_energy_view(request):
+    schema = SchemaHopfieldEnergy()
+    myform = Form(schema, buttons=('submit',))
+    js_tags, css_tags = get_resources(request, myform)
+    result = {'title': u"Hopfield računanje energije", "js_tags": js_tags,
+              "css_tags": css_tags, "hopfield_energy": True}
+    appstruct = {
+        'vhod': [[1, 1, -1, -1]],
+        'utez':[[0,1,0,-2],
+                [1,0,-2,0],
+                [0,-2,0,-3],
+                [-2,0,-3,0]]
+    }
+    if 'submit' in request.POST:
+        controls = request.POST.items()
+        try:
+            appstruct = myform.validate(controls)
+            #print appstruct
+            nn = Hopfield(text_output=[])
+            nn.weight_matrix = appstruct['utez']
+            #nn.calc_energy(appstruct['vhod'], appstruct['multiply'])
+            nn.calc_energy(appstruct['vhod'])
             result["text_izhod"] = nn.text_output
             #print appstruct
         except ValidationFailure, e:

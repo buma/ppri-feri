@@ -44,6 +44,7 @@
 			<ul class="dropdown-menu">
 				<li><a href="${request.route_url('hop')}">Stanja</a></li>
 				<li><a href="${request.route_url('hop_learn')}">Učenje</a></li>
+				<li><a href="${request.route_url('hop_energy')}">Energija</a></li>
 			</ul>
 			</li>
 		  <li><a href="${request.route_url('mlp')}">Nevronske mreža</a></li>
