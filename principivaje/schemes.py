@@ -70,9 +70,6 @@ class SchemaNevronskaMreza(colander.MappingSchema):
                               default=0.3,
                               description="Hitrost učenja")
 
-    paketno_ucenje = colander.SchemaNode(colander.Bool(),
-                                         default=True)
-
     vhod = SchemaRowsVhod(description="Vhodne vrednosti brez biasa")
     zeleni_izhod = SchemaRowsZeleniIzhod(
         description=u"Kakšen bi moral biti izhod nevronske mreže",
