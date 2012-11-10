@@ -54,6 +54,8 @@
 
 %endif
 
+% if hopfield is None:
+
 <div class="alert alert-info alert-block">
 	<button type="button" class="close" data-dismiss="alert">×</button>
 	<h4>V vednost</h4>
@@ -63,6 +65,8 @@
 		Ta skripta zaokrožuje na <strong>3</strong> mesta po vsakem izračunu.
 	%endif
 </div>
+
+% endif
 
 
 ${form|n}

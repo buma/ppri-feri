@@ -38,6 +38,9 @@
 		  <li><a href="${request.route_url('delta')}">Delta algoritem</a></li>
 	  </ul>
 	  <ul class="nav">
+		  <li><a href="${request.route_url('hop')}">Hopfield</a></li>
+	  </ul>
+	  <ul class="nav">
 		  <li><a href="${request.route_url('mlp')}">Nevronske mreža</a></li>
 	  </ul>
 	  <ul class="nav">
