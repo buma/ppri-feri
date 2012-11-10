@@ -5,23 +5,49 @@ from itertools import product as iproduct
 
 class Hopfield(object):
 
-    def __init__(self, w, text_output=[]):
+    def __init__(self, w, function_type=0, text_output=[]):
         """Delta learning algorithm
 
         w - numpy array of weights
         """
-        self.weight = np.array(w)
-        self.y_func = self.y_i
         self.text_output = text_output
+        self.text_output.append(u"<h2>Sinhrono učenje</h2>")
+        self.weight = np.array(w)
+        self.function_type = function_type
+        if function_type == 0:
+            self.y_func = self.y_i_0
+            self.text_output.append(r"$$y =  \left\{\begin{matrix} 0 & \mbox {if } v < 0, \\ 1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$")
+        elif function_type == 1:
+            self.y_func = self.y_i_1
+            self.text_output.append(r"$$y =  \left\{\begin{matrix} -1 & \mbox {if } v < 0, \\ +1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$")
+            self.text_output.append(u'<span class="label label-warning">Opozorilo</span>Ta funkcija je še v beta stanju. Nevem namreč kako računat oznake</p>')
+        else:
+            raise Exception("Invalid function: %d!" % (function_type,))
         self.table = []
         self.number_of_weights = len(w)
         weights_label = ["\(y_%d\)" % i for i in range(1,
                                                        self.number_of_weights + 1)]
         header = weights_label + ["Oznaka"] + weights_label + ["Oznaka"]
         self.table.append(header)
-        self.text_output.append(u"<h2>Sinhrono učenje</h2>")
 
-    def y_i(self, v_i, y_before):
+    def y_i_1(self, v_i, y_before):
+        retval = None
+        text = "$$"
+        if v_i < 0:
+            text += "v_i < 0; y_i = -1"
+            retval = -1
+        elif v_i > 0:
+            text += "v_i > 0; y_i = 1"
+            retval = 1
+        elif v_i == 0:
+            text += "v_i \\text{enak kot prej}; y_i = \\text{enako kot prej}"
+            retval = y_before
+        text += "$$"
+        self.text_output.append(text)
+        assert(retval is not None)
+        return retval
+
+    def y_i_0(self, v_i, y_before):
         retval = None
         text = "$$"
         if v_i < 0:
@@ -70,10 +96,13 @@ class Hopfield(object):
                 v_i = self.v_i(i, input_row)
                 y_i = self.y_func(v_i, input_y)
                 table_row.append(y_i)
-            oznaka_bin = "".join(map(str, table_row[-self.number_of_weights:]))
-            oznaka = int(oznaka_bin, 2)
-            if oznaka == index:
-                oznaka = {'val': oznaka}
+            if self.function_type == 0:
+                oznaka_bin = "".join(map(str, table_row[-self.number_of_weights:]))
+                oznaka = int(oznaka_bin, 2)
+                if oznaka == index:
+                    oznaka = {'val': oznaka}
+            else:
+                oznaka = "??"
             table_row.append(oznaka)
 
             self.table.append(table_row)

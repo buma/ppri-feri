@@ -184,3 +184,18 @@ class SchemaDeltaAlgorithm(colander.MappingSchema):
 class SchemaHopfield(colander.MappingSchema):
     utez = SchemaRowsWeightHop(description=u"Utežna matrika W",
                                validator=validate_delta_input)
+    functions = (
+        (0, u'Funkcija 1'),
+        #('linear', 'Linearna'),
+        #('step', u'Stopničasta'),
+        (1, 'Funkcija 2'),
+    )
+    function_type = colander.SchemaNode(colander.Int(),
+                                        default=0,
+                                        #default='tlu',
+                                        validator=colander.OneOf(
+                                        [x[0] for x in functions]),
+                                        widget=deform.widget.SelectWidget(
+                                        values=functions),
+                                        title=u"Osveževalna funkcija"
+                                        )

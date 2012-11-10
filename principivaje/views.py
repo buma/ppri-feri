@@ -142,7 +142,8 @@ def hopfield_view(request):
         try:
             appstruct = myform.validate(controls)
             #print appstruct
-            nn = Hopfield(appstruct['utez']
+            nn = Hopfield(appstruct['utez'],
+                          appstruct['function_type']
                                )
             nn.run()
             result["tabela"] = nn.table

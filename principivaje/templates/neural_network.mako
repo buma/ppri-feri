@@ -49,8 +49,12 @@
 	<button type="button" class="close" data-dismiss="alert">×</button>
 	<h4>Opozorilo</h4>
 
-		<p>>Formula za \(v_i\) je na predavanjih podana kot \(v_i=\sum_{i=1}^{n}w_{i j}y_j(t-1)\) jaz uporabljam \(v_i=\sum_{i=1}^{n}w_{i j}y_i(t-1)\), ker drugače nevem kako bi se \(y_j\) računal</p>
+		<p>Formula za \(v_i\) je na predavanjih podana kot \(v_i=\sum_{i=1}^{n}w_{i j}y_j(t-1)\) jaz uporabljam \(v_i=\sum_{i=1}^{n}w_{i j}y_i(t-1)\), ker drugače nevem kako bi se \(y_j\) računal</p>
 	</div>
+
+	<p>Funkcija 1: $$y =  \left\{\begin{matrix} 0 & \mbox {if } v < 0, \\ 1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$</p>
+
+	<p>Funkcija 2: $$y =  \left\{\begin{matrix} -1 & \mbox {if } v < 0, \\ +1 & \mbox{if } v > 0, \\ \text{enako kot prej} & \mbox{if } v=0\end{matrix}\right.$$</p>
 
 %endif
 
