@@ -70,7 +70,7 @@ class Hopfield(object):
             else:
                 return "%d" % x
         output = []
-        izpis = "%s*%s"
+        izpis = "%s \cdot %s"
         str_vhod = map(to_str, y)
         str_w = map(to_str, self.weight[:, i])
         output = map(lambda x: izpis % x, zip(str_w, str_vhod))

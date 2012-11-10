@@ -70,7 +70,7 @@ class Nevronska_mreza(object):
             else:
                 return "%0.1g" % x
         izhod = []
-        izpis = "%s*%s"
+        izpis = "%s \cdot %s"
         str_vhod = map(to_str, vhod)
         str_w = map(to_str, w)
         izhod = map(lambda x: izpis % x, zip(str_w, str_vhod))
@@ -237,8 +237,8 @@ class Nevronska_mreza(object):
             i, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
         y_j_l = self.y(j, l - 1, vhod)
         rez = self.eta * delta_j_l * y_j_l
-        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = \eta * \delta_{i}^{{({l})}}y_{j}^{l_1}$$".format(i=i, j=j, l=l, l_1=l - 1))
-        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = {eta: .02g} * {delta: 0.2g} * {y: 0.2g} = {rez: 0.2g}$$".format(i=i, j=j, l=l, eta=self.eta, delta=delta_j_l, rez=rez, y=y_j_l))
+        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = \eta \cdot \delta_{i}^{{({l})}}y_{j}^{l_1}$$".format(i=i, j=j, l=l, l_1=l - 1))
+        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = {eta: .02g} \cdot {delta: 0.2g} \cdot {y: 0.2g} = {rez: 0.2g}$$".format(i=i, j=j, l=l, eta=self.eta, delta=delta_j_l, rez=rez, y=y_j_l))
         return rez
 
 

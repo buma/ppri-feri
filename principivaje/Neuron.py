@@ -15,7 +15,7 @@ class Neuron(object):
             else:
                 return "%0.1g" % x
         output = []
-        izpis = "%s*%s"
+        izpis = "%s \cdot %s"
         str_vhod = map(to_str, x)
         str_w = map(to_str, self.weight)
         output = map(lambda x: izpis % x, zip(str_w, str_vhod))
