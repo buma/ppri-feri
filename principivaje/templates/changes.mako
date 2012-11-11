@@ -39,6 +39,7 @@ function github_commits(resp) {
   }
   function _date(d) {
 	  var dat = Date.parse(d);
+	  dat = dat.add({'hours': 1});
 	  return dat.toLocaleString();
   }
 
