@@ -3,64 +3,38 @@ import colander
 import deform
 
 
-class SchemaRowZeleniIzhod(colander.TupleSchema):
+class SchemaRowZeleniIzhod(colander.SequenceSchema):
     n_0 = colander.SchemaNode(colander.Float(), validator=colander.Range(0, 1))
-    n_1 = colander.SchemaNode(colander.Float(), validator=colander.Range(0, 1))
 
 
 class SchemaRowsZeleniIzhod(colander.SequenceSchema):
-    row = SchemaRowZeleniIzhod()
+    row = SchemaRowZeleniIzhod(widget=deform.widget.TextInputCSVWidget())
 
 
-class SchemaRowZeleniIzhodDelta(colander.TupleSchema):
-    n_0 = colander.SchemaNode(colander.Float(), validator=colander.Range(0, 1))
+class SchemaRowZeleniIzhodDelta(colander.SequenceSchema):
+    n_0 = colander.SchemaNode(colander.Float(), validator=colander.Range(-1, 1))
 
 
 class SchemaRowsZeleniIzhodDelta(colander.SequenceSchema):
-    row = SchemaRowZeleniIzhodDelta()
+    row = SchemaRowZeleniIzhodDelta(widget=deform.widget.TextInputCSVWidget())
 
 
-class SchemaRowVhod(colander.TupleSchema):
-    n_0 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_1 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_2 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
+class SchemaRowVhod(colander.SequenceSchema):
+    x = colander.SchemaNode(
+        colander.Float(), validator=colander.Range(-10, 10))
 
 
 class SchemaRowsVhod(colander.SequenceSchema):
-    row = SchemaRowVhod()
+    row = SchemaRowVhod(widget=deform.widget.TextInputCSVWidget())
 
 
-class SchemaRowUtez1(colander.TupleSchema):
-    n_0 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_1 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_2 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
+class SchemaRowUtez(colander.SequenceSchema):
     n_3 = colander.SchemaNode(
         colander.Float(), validator=colander.Range(-1, 1))
 
 
-class SchemaRowsUtez1(colander.SequenceSchema):
-    row = SchemaRowUtez1()
-
-
-class SchemaRowUtez2(colander.TupleSchema):
-    n_0 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_1 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_2 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-    n_3 = colander.SchemaNode(
-        colander.Float(), validator=colander.Range(-1, 1))
-
-
-class SchemaRowsUtez2(colander.SequenceSchema):
-    row = SchemaRowUtez2()
+class SchemaRowsUtez(colander.SequenceSchema):
+    row = SchemaRowUtez(widget=deform.widget.TextInputCSVWidget())
 
 
 class SchemaNevronskaMreza(colander.MappingSchema):
@@ -76,19 +50,9 @@ class SchemaNevronskaMreza(colander.MappingSchema):
         title=u"Želeni izhod"
     )
 
-    utezi_prvi_nivo = SchemaRowsUtez1(validator=colander.Length(1, 3),
-                                      widget=deform.widget.SequenceWidget(
-                                      min_len=1,
-                                      max_len=3),
-                                      title=u"Uteži prvi nivo"
-                                      )
+    utezi_prvi_nivo = SchemaRowsUtez(title=u"Uteži prvi nivo")
 
-    utezi_drugi_nivo = SchemaRowsUtez2(validator=colander.Length(1, 2),
-                                       widget=deform.widget.SequenceWidget(
-                                       min_len=1,
-                                       max_len=2
-                                       ),
-                                       title=u"Uteži prvi nivo")
+    utezi_drugi_nivo = SchemaRowsUtez(title=u"Uteži drugi nivo")
 
     utez_i = colander.SchemaNode(colander.Int(),
                                  validator=colander.Range(1, 3),
