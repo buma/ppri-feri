@@ -80,17 +80,18 @@
 %endif
 
 
-% if hopfield is None:
-
-<div class="alert alert-info alert-block">
-	<button type="button" class="close" data-dismiss="alert">×</button>
-	<h4>V vednost</h4>
-	Nekatere vrednosti niso enako kot na predavanjih ugotavljam ali je to zaradi kakšnih napak, ali pa zaradi zaokroževanja.
-	Namreč nisem še ugotovil na kakšen način se bi naj zaokroževalo. Včasih sta 2 mesti včasih 3...
-	%if delta:
-		Ta skripta zaokrožuje na <strong>3</strong> mesta po vsakem izračunu.
-	%endif
-</div>
+% if hopfield or delta:
+	<div class="alert alert-info alert-block">
+		<button type="button" class="close" data-dismiss="alert">×</button>
+		<h4>V vednost</h4>
+		Nekatere vrednosti niso enako kot na predavanjih ugotavljam ali je to zaradi kakšnih napak, ali pa zaradi zaokroževanja.
+		Zaokroževalo bi se naj na <strong>6</strong> decimalk. 
+		%if delta:
+			Ta skripta zaokrožuje na <strong>3</strong> mesta po vsakem izračunu.
+		%else:
+			Zato skripta to tudi počne.
+		%endif
+	</div>
 
 % endif
 

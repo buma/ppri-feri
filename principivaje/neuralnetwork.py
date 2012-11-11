@@ -62,9 +62,9 @@ class Nevronska_mreza(object):
     def perceptron(w, vhod):
         def to_str(x):
             if x < 0:
-                return "(%0.1g)" % x
+                return "(%0.6f)" % x
             else:
-                return "%0.1g" % x
+                return "%0.6f" % x
         izhod = []
         izpis = "%s \cdot %s"
         str_vhod = map(to_str, vhod)
@@ -73,7 +73,7 @@ class Nevronska_mreza(object):
         str_izhod = " + ".join(izhod)
 
         v = (w.T * vhod).sum()
-        str_izhod += " = %.03g" % v
+        str_izhod += " = %.6f" % v
         return v, str_izhod
 
     @staticmethod
@@ -113,7 +113,7 @@ class Nevronska_mreza(object):
                                          self.vhod_1[index_primer], self.vhod_2[index_primer],
                                          self.izhod[index_primer],
                                          self.zeleni_izhod[index_primer])
-            self.tabela[index_primer + 1][-1] = "%0.2g" % (w_tren,)
+            self.tabela[index_primer + 1][-1] = "%0.6f" % (w_tren,)
 # Skupen popravek uteži
             w_pop += w_tren
 # Napolni se tabela z ostalimi deltami
@@ -132,9 +132,9 @@ class Nevronska_mreza(object):
                     except Exception, ex:
                         var = 0
                 self.tabela[1 + index_primer][
-                    index_tabela + self.length_input + self.length_last_layer*2] = "%0.3g" % (var,)
+                    index_tabela + self.length_input + self.length_last_layer*2] = "%0.6f" % (var,)
             self.deltas = {}
-        self.text_izhod.append("Skupni popravek utezi \(w_{{{i},{j}}}^{{({l})}} = {w:0.3g}\)".format(w=w_pop, i=self.i, j=self.j, l=self.l))
+        self.text_izhod.append("Skupni popravek utezi \(w_{{{i},{j}}}^{{({l})}} = {w:0.6f}\)".format(w=w_pop, i=self.i, j=self.j, l=self.l))
 
     def nivo(self, indeks_primera, indeks_nivo, vhod, utezi, vhod_2=None):
         """izracuna za en vhodni primer izhode vseh nevronov v plasti"""
@@ -156,7 +156,7 @@ class Nevronska_mreza(object):
             y = Nevronska_mreza.logisticni_neuron(v)
             #import pdb; pdb.set_trace()
             self.text_izhod.append(
-                "$$y_%d^{(%d)} = %0.3g$$" % (utez[0], utez[1], y))
+                "$$y_%d^{(%d)} = %0.6f$$" % (utez[0], utez[1], y))
             vhod_2[indeks_primera, utez[0]] = round(y, 3)
         return vhod_2
 
@@ -164,14 +164,14 @@ class Nevronska_mreza(object):
         """Izračunava želeno delto in vse y-one in delte,ki so potrebni za ta izračun
         za popravljanje napak"""
         start = "$$\delta_{j}^{{({l})}} = y_{j}^{{{l}}} \\times (1-y_{j}^{{{l}}})"
-        start_vals = "$$\delta_{j}^{{({l})}} = {y: 0.2g} \\times (1 - {y: 0.2g})"
+        start_vals = "$$\delta_{j}^{{({l})}} = {y: 0.6f} \\times (1 - {y: 0.6f})"
         # računa za zadnji nivo
         if l == 2:
             o_i = izhod_nivo[j]
             d_i = zeleni_izhod_i[j - 1]
             rez = o_i * (1 - o_i) * (d_i - o_i)
             tmp = start.replace("y", "o") + " \\times (d_{j} - o_{j})$$"
-            vals = start_vals + "\\times ({d} - {y: 0.2g}) = {rez: 0.2g}$$"
+            vals = start_vals + "\\times ({d} - {y: 0.6f}) = {rez: 0.6f}$$"
             self.text_izhod.append(tmp.format(j=j, l=l))
             self.text_izhod.append(
                 vals.format(j=j, l=l, y=o_i, d=d_i, rez=rez))
@@ -193,7 +193,7 @@ class Nevronska_mreza(object):
                     wk.append("w_{{" + str(k) + ",{j}}}^{{({l_1})}} \\times \delta_" + str(k) + "^{{({l_1})}}")
                     delta_j_l_1 = self.delta(
                         k, l + 1, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i)
-                    wk_vals.append("%.02g \\times %.03g" % (utez, delta_j_l_1))
+                    wk_vals.append("%.6f \\times %.6f" % (utez, delta_j_l_1))
                     rez_vals.append(utez * delta_j_l_1)
                     k += 1
             tmp += "+".join(wk)
@@ -201,7 +201,7 @@ class Nevronska_mreza(object):
             rez *= sum(rez_vals)
 
             tmp += ")$$"
-            vals = vals + ") = {rez: 0.2g}$$"
+            vals = vals + ") = {rez: 0.6f}$$"
             self.text_izhod.append(tmp.format(j=j, l=l, l_1=l + 1))
             self.text_izhod.append(vals.format(j=j, l=l, y=y_j_l, rez=rez))
             self.deltas["%d_%d" % (j, l)] = rez
@@ -219,13 +219,13 @@ class Nevronska_mreza(object):
         if l == 0:
             rez = vhod[j]
             self.text_izhod.append(
-                "$$y_{j}^{{0}} = x_{j} = {rez: 0.2g}$$".format(j=j, rez=rez))
+                "$$y_{j}^{{0}} = x_{j} = {rez: 0.6f}$$".format(j=j, rez=rez))
             return rez
         start = "$$y_{j}^{{{l}}} = "
 # y_j^(l) je rezultat nekje v skriti plasti
         if l == 1:
             rez = self.vhod_2[self.index_primer, j]
-            tmp = start + "{rez: 0.2g}$$"
+            tmp = start + "{rez: 0.6f}$$"
             self.text_izhod.append(tmp.format(j=j, l=l, rez=rez))
         return rez
 
@@ -237,7 +237,7 @@ class Nevronska_mreza(object):
         y_j_l = self.y(j, l - 1, vhod)
         rez = self.eta * delta_j_l * y_j_l
         self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = \eta \cdot \delta_{i}^{{({l})}}y_{j}^{l_1}$$".format(i=i, j=j, l=l, l_1=l - 1))
-        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = {eta: .02g} \cdot {delta: 0.2g} \cdot {y: 0.2g} = {rez: 0.2g}$$".format(i=i, j=j, l=l, eta=self.eta, delta=delta_j_l, rez=rez, y=y_j_l))
+        self.text_izhod.append("$$\Delta w_{{{i},{j}}}^{{({l})}} = {eta: .6f} \cdot {delta: 0.6f} \cdot {y: 0.6f} = {rez: 0.6f}$$".format(i=i, j=j, l=l, eta=self.eta, delta=delta_j_l, rez=rez, y=y_j_l))
         return rez
 
 
