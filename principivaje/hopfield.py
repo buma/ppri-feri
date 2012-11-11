@@ -229,7 +229,7 @@ class Hopfield(object):
                         i=i + 1, j=j + 1, N=self.N)
                     text_write = text_vals_start + " + ".join(text_out) + ")$$"
                     text_write_values = text_vals_start + " + ".join(
-                        text_vals_out) + ") = {rez:0g}$$".format(rez=weight)
+                        text_vals_out) + ") = \\frac{{1}}{N} \cdot {rez:0g}$$".format(rez=weight, N=self.N)
                     self.text_output.append(
                         text.format(i=i + 1, j=j + 1, N=self.N, p=p))
                     self.text_output.append(text_write)
