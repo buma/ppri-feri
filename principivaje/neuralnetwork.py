@@ -11,17 +11,6 @@ class Nevronska_mreza(object):
 
     def __init__(self, eta, vhod_1, zeleni_izhod, w_1, w_2, i, j, l):
         Neuron = namedtuple("Neuron", "utez")
-        neuroni_1 = [
-            Neuron(utez=(1, 1)),
-            Neuron(utez=(2, 1)),
-            Neuron(utez=(3, 1))
-        ]
-
-        neuroni_2 = [
-            Neuron(utez=(1, 1)),
-            Neuron(utez=(2, 1)),
-        ]
-        self.neuroni = [neuroni_1, neuroni_2]
         vhod_1 = np.array(vhod_1)
         bias = np.zeros((vhod_1.shape[0], 1)) - 1
         vhod_1 = np.hstack((bias, vhod_1))
@@ -30,22 +19,29 @@ class Nevronska_mreza(object):
         self.zeleni_izhod = np.array(zeleni_izhod)
         self.w_1 = np.array(w_1)
         self.w_2 = np.array(w_2)
-        self.i = i
-        self.j = j
-        self.l = l
-        self.text_izhod = []
-        self.tabela = []
         if self.vhod_1.shape[1] != self.w_1.shape[1]:
             raise Exception(u"Dolžina vhoda in število uteži v prvem nivoju mora biti enako!")
         if self.vhod_1.shape[0] != self.zeleni_izhod.shape[0]:
             raise Exception(
                 u"Število vhodov mora biti enako številu želenih izhodov")
+        self.i = i
+        self.j = j
+        self.l = l
+        self.text_izhod = []
+        self.tabela = []
+        neuroni_1 = [Neuron(utez=(i, 1)) for i in range(1, self.w_1.shape[0] + 1)]
+
+        neuroni_2 = [Neuron(utez=(i, 1)) for i in range(1, self.w_2.shape[0] + 1)]
+
+        self.neuroni = [neuroni_1, neuroni_2]
         header = ["p"]
-        for i in range(1, 4):
+        self.length_input = self.vhod_1.shape[1]
+        self.length_last_layer = self.w_2.shape[0]
+        for i in range(1, self.length_input):
             header.append("\(x_%d^{(p)}\)" % i)
-        for i in range(1, 3):
+        for i in range(1, self.length_last_layer + 1):
             header.append("\(o_%d^{(p)}\)" % i)
-        for i in range(1, 3):
+        for i in range(1, self.length_last_layer + 1):
             header.append("\(d_%d^{(p)}\)" % i)
         for i in range(1, 3):
             header.append("\(\delta_%d^{(2)}\)" % i)
@@ -56,7 +52,7 @@ class Nevronska_mreza(object):
         for i in range(self.vhod_1.shape[0]):
             rezultati = [i + 1]
             rezultati.extend(self.vhod_1[i, 1:])
-            rezultati.extend([" ", " "])
+            rezultati.extend([" "] * self.length_last_layer)
             rezultati.extend(self.zeleni_izhod[i, :])
             rezultati.extend([" "] * 6)
             self.tabela.append(rezultati)
@@ -128,12 +124,15 @@ class Nevronska_mreza(object):
             for index_tabela, (j, l) in enumerate([(1, 2), (2, 2), (1, 1), (2, 1), (3, 1)]):
                 var = self.deltas.get("%d_%d" % (j, l), None)
                 if var is None:
-                    var = self.delta(j, l, self.vhod_1[index_primer],
-                                     self.vhod_2[index_primer],
-                                     self.izhod[index_primer],
-                                     self.zeleni_izhod[index_primer])
+                    try:
+                        var = self.delta(j, l, self.vhod_1[index_primer],
+                                        self.vhod_2[index_primer],
+                                        self.izhod[index_primer],
+                                        self.zeleni_izhod[index_primer])
+                    except Exception, ex:
+                        var = 0
                 self.tabela[1 + index_primer][
-                    index_tabela + 8] = "%0.3g" % (var,)
+                    index_tabela + self.length_input + self.length_last_layer*2] = "%0.3g" % (var,)
             self.deltas = {}
         self.text_izhod.append("Skupni popravek utezi \(w_{{{i},{j}}}^{{({l})}} = {w:0.3g}\)".format(w=w_pop, i=self.i, j=self.j, l=self.l))
 
@@ -275,3 +274,31 @@ if __name__ == "__main__":
     ])
     nn = Nevronska_mreza(0.3, vhod_1, zeleni_izhod, w_1, w_2, 1, 2, 1)
     nn.run()
+    print nn.tabela[0]
+    #for text in nn.text_izhod:
+        #print text
+
+    eta = 0.5
+
+    vhod_1 = [
+        [0.5, -0.4]
+    ]
+
+    zeleni_izhod = [
+        [0]
+    ]
+
+    w_1 = [
+        [0.3, -0.4, 0],
+        [0, 0.6, 0.5]
+    ]
+
+    w_2 = [
+        [0.5, -0.5, 0.7]
+    ]
+
+    nn = Nevronska_mreza(eta, vhod_1, zeleni_izhod, w_1, w_2, 1,1,2)
+    print nn.tabela[0]
+    nn.run()
+    for text in nn.text_izhod:
+        print text
