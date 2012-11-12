@@ -207,6 +207,8 @@ class Hopfield(object):
         p = inputs.shape[0]
         converted_inputs = self.convert_inputs(inputs)
         self.weight = np.zeros((self.N, self.N))
+        text_l = "$$w_{i,j}=\\left\{\\begin{matrix} \\frac{1}{N}\sum_{k=1}^{p}y_{k,i}y_{k,j} & \\mbox{ if } i \\neq j \\\\ 0 & \\mbox{ if } i = j\end{matrix}\\right.$$"
+        self.text_output.append(text_l)
         text = "$$w_{{{i},{j}}}=\\frac{{1}}{{{N}}}\sum_{{k=1}}^{p}y_{{k,{i}}}y_{{k,{j}}}$$"
         text_vals = "$$w_{{{i},{j}}}=\\frac{{1}}{{{N}}} ("
         text_bet_vals = "y_{{{k},{i}}} \cdot y_{{{k},{j}}}"
