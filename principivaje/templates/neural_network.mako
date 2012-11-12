@@ -77,10 +77,10 @@
 	<p>Privzeti podatki so podani za nalogo na strani 10 na predavanjih.</p>
 
 	<p>Pri vnosu uteži so predvidena cela števila. Matrika se pomnoži sama z \(\frac{1}{N}\)</p>
-	<div class="alert alert-error alert-block">
+	<div class="alert alert-info alert-block">
 		<button type="button" class="close" data-dismiss="alert">×</button>
-		<h4>Napaka!</h4>
-		Skripta ne dela! Ne uporabljaj tega!
+		<h4>Info</h4>
+		Napaka v skripti odpravljena.
 	</div>
 %endif
 

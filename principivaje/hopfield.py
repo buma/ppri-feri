@@ -132,7 +132,7 @@ class Hopfield(object):
                         text_wyy.append(text_vals.format(i=i + 1, j=j + 1))
                         text_numbers_list.append(text_numbers % (
                             self.weight[i, j], one_input[i], one_input[j]))
-            E *= 1.0 / self.N * 2
+            E *= 1.0 / self.N * 2 * tmp
             text_val = text_start + "( " + " + ".join(text_wyy) + ")$$"
             self.text_output.append(text_val)
             if vhod_number == 0:
