@@ -59,6 +59,13 @@
     
     ${next.body()}
 </div>
+<footer class="footer">
+<div class="container">
+	<p class="pull-right"><a href="#">Na vrh</a></p>
+	<p>The author reserves the right not to be responsible for the topicality, correctness, completeness or quality of the information provided. Liability claims regarding damage caused by the use of any information provided, including any kind of information which is incomplete or incorrect,will therefore be rejected.</p>
+</div>
+
+</footer>
   % if request.registry.settings["env"] == "production":
 	  <a title="Real Time Web Analytics" href="http://getclicky.com/100545333"><img alt="Real Time Web Analytics" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
 	  <script src="//static.getclicky.com/js" type="text/javascript"></script>
