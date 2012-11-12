@@ -157,7 +157,7 @@ class Nevronska_mreza(object):
             #import pdb; pdb.set_trace()
             self.text_izhod.append(
                 "$$y_%d^{(%d)} = %0.6f$$" % (utez[0], utez[1], y))
-            vhod_2[indeks_primera, utez[0]] = round(y, 3)
+            vhod_2[indeks_primera, utez[0]] = round(y, 6)
         return vhod_2
 
     def delta(self, j, l, vhod, izhod_s_nivo, izhod_nivo, zeleni_izhod_i):
